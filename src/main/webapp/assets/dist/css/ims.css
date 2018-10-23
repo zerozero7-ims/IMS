@@ -1,0 +1,20 @@
+.toolbar{
+    float:left;
+}
+
+
+.btn-group-sm>.btn, .btn-md {
+    padding: 7px 12px;
+    line-height: 1.5;
+    border-radius: 4px;
+    margin-right:10px;
+}
+
+
+.panel-ims{
+    border:0;
+}
+
+.panel-body-ims{
+    padding:0;
+}

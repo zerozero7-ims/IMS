@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ims.dao.EntMapper">
+  
+	<select id="getLmTree" resultType="map">
+		select t.id,t.pId,t.nav,s.zdxpy lxpy,'true' open,t.donly2,t.donly3,t.url lj,
+		<if test="showid==1"> CONCAT(t.name,' (',CAST(t.id AS CHAR),')') name </if>
+		<if test="showid!=1"> t.name </if>
+		from tjpcms_lanmu t left join tjpcms_zdx s on t.lx=s.zdxmc left join tjpcms_zdb d on s.pid=d.id
+		where d.py='lanmuleixing'
+		order by t.px,t.gx desc
+	</select>
+
+	<select id="usrGetLm" resultType="map">
+		select t.id,t.pId,t.nav,s.zdxpy lxpy,'true' open, t.name,t.donly2,t.donly3,t.url lj
+		from tjpcms_lanmu t left join tjpcms_zdx s on t.lx=s.zdxmc left join tjpcms_zdb d on s.pid=d.id
+		where d.py='lanmuleixing' and  (t.id in (141,146,153,154,155,174,156,164,165,167,177,178))
+		order by t.px,t.gx desc
+	</select>
+
+	<select id="getTblZiduan" resultType="java.util.Map">
+		SELECT COLUMN_NAME,extra,data_type,CHARACTER_MAXIMUM_LENGTH,COLUMN_KEY
+			FROM information_schema.COLUMNS where TABLE_SCHEMA=#{1} and TABLE_NAME=#{0}
+	</select>
+	
+	<select id="getLmList" resultType="map">
+		SELECT t.*,(select count(*) from tjpcms_lanmu s where s.pid=t.id)cnt,s.zdxmc,s.zdxpy lxpy,s.sys
+		from tjpcms_lanmu t left join tjpcms_zdx s on t.lx=s.zdxmc left join tjpcms_zdb d on s.pid=d.id
+		where t.pid=#{0} and d.py='lanmuleixing'
+		order by t.px,t.id limit #{1},#{2}
+	</select>
+	
+	<select id="cntLmList" resultType="int">
+		SELECT count(*) from tjpcms_lanmu where pid=#{0}
+	</select>
+
+
+	<insert id="ins"  parameterType="map" useGeneratedKeys="true"  keyProperty="id"><!-- 这个可以返回插入的id -->
+		${sql}
+	</insert>
+	<insert id="add"  parameterType="java.lang.String">
+		${sql}
+	</insert>
+	<delete id="del"  parameterType="java.lang.String">
+		${sql}
+	</delete>
+	<update id="upd"  parameterType="java.lang.String">
+		${sql}
+	</update>
+	<select id="r" resultType="map" parameterType="java.lang.String" >
+		${sql}
+	</select>
+	<select id="ro" resultType="map" parameterType="java.lang.String" >
+		${sql}
+	</select>
+	<select id="cnt" resultType="int" parameterType="java.lang.String">
+		${sql}
+	</select>
+	<select id="vpx" resultType="int" parameterType="java.lang.String">
+		${sql}
+	</select>
+	<select id="obj" resultType="map" parameterType="java.lang.String">
+		${sql}
+	</select>
+
+	
+	<select id="getnav" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT * from tjpcms_lanmu  where pID=1 and nav='显示'   order by px ,gx desc
+	</select>
+	<select id="getzlmlist" resultType="java.util.Map" parameterType="Object">
+		SELECT * from tjpcms_lanmu  where pID=#{0} and nav='显示'     order by px ,gx desc
+	</select>
+	
+
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 其中命名空间指向与该文件同名的DAO层接口 -->
+<mapper namespace="com.ims.dao.IMenuDAO">
+	<!-- 通过resultMap解决实体类属性与数据库字段名不一致的问题 -->
+	<resultMap type="com.ims.entity.Menu" id="menuResult">
+		<!-- 其中id为主键，result为普通字段 -->
+		<!-- property对应实体类属性，column对应数据库字段名（查询结果集中的字段名） -->
+		<id property="menuid" column="menuid"/>
+		<result property="parentid" column="parentid" />
+		<result property="title" column="title" />
+		<result property="sort" column="sort" />
+		<result property="link" column="link" />
+		<result property="display" column="display" />
+		<result property="icon" column="icon" />
+	</resultMap>
+	<!-- 增删改查 -->
+	<insert id="add"  parameterType="java.lang.String">
+		${_parameter}
+	</insert>
+	<delete id="del"  parameterType="java.lang.String">
+		${_parameter}
+	</delete>
+	<update id="alter"  parameterType="java.lang.String">
+		${_parameter}
+	</update>
+	<select id="query" resultMap="menuResult" parameterType="java.lang.String" >
+		${_parameter}
+	</select>
+
+	 <!-- 插入数据后获得自增主键的值 -->
+	<insert id="insert" keyProperty="id" keyColumn="id">
+		INSERT INTO menu(parentid,title,sort,link,display,icon) 
+		VALUES(#{parentid},#{title},#{sort},#{link},#{display},#{icon})
+	</insert>
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE menu set parentid=#{parentid}, title=#{title}, sort=#{sort}, link=#{link}, display=#{display}, icon=#{icon} WHERE menuid=#{menuid}
+	</update>
+	<!-- 删除-->
+    <delete id="delete">
+        DELETE FROM menu WHERE menuid=#{menuid}
+    </delete>
+	<!-- 根据id查询 -->
+	<select id="findByMenuId" resultMap="menuResult">
+		SELECT * FROM menu WHERE menuid=#{menuid} and display = 1 order by sort asc
+	</select>
+	<!-- 根据parentid查询 -->
+	<select id="findByParentId" resultMap="menuResult">
+		SELECT * FROM menu WHERE parentid=#{parentid} and display = 1 order by sort asc
+	</select>
+    <!-- 查询所有菜单 -->
+	<select id="findAll" resultMap="menuResult">
+		SELECT * FROM menu
+    </select>
+
+</mapper>
