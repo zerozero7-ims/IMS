@@ -22,6 +22,19 @@
 	<mvc:annotation-driven/>
 	<mvc:resources location="/assets/" mapping="/assets/**"/>
 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!--匹配的是url路径，如果不匹配或/**，将拦截所有的Controller-->
+			<mvc:mapping path="/**" />
+			<!--/register和/login不需要拦截-->
+			<mvc:exclude-mapping path="/register" />
+			<mvc:exclude-mapping path="/login" />
+			<mvc:exclude-mapping path="/index" />
+			<mvc:exclude-mapping path="/assets/**" />
+			<bean class="com.ims.interceptor.TokenInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
 	
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/pages/"/>

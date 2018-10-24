@@ -1,15 +1,11 @@
 package com.ims.controller;
 
 import com.ims.dao.EntMapper;
-import com.ims.util.Common;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,10 +27,17 @@ public class IndexController {
 		return new ModelAndView("search/search", map);
 	}
 
+	@RequestMapping("/main")
+	public ModelAndView main(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("main");
+		return mv;
+	}
+
 	@RequestMapping("/index")
 	public ModelAndView index(){
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("index");
+		mv.setViewName("login");
 		return mv;
 	}
 

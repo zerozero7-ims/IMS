@@ -127,7 +127,7 @@
         <artifactId>mybatis-spring</artifactId>
         <version>1.2.3</version>
     </dependency>
-    <!--json依赖的jar包-->
+    <!--jsonp依赖的jar包-->
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
@@ -138,6 +138,12 @@
         <artifactId>jackson-databind</artifactId>
         <version>2.5.4</version>
     </dependency>
+      <!--json依赖的jar包-->
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>1.2.32</version>
+      </dependency>
     <!-- 爬虫依赖的jar包 -->
     <dependency>
     	<groupId>org.jsoup</groupId>
@@ -161,10 +167,11 @@
 
       <!--JWT(Json web token)，将用户信息加密到token里，服务器通过使用保存的密钥验证token的正确性，而不保存任何用户信息。-->
       <dependency>
-          <groupId>org.bitbucket.b_c</groupId>
-          <artifactId>jose4j</artifactId>
-          <version>0.6.4</version>
+          <groupId>com.auth0</groupId>
+          <artifactId>java-jwt</artifactId>
+          <version>2.2.0</version>
       </dependency>
+
 
 
      

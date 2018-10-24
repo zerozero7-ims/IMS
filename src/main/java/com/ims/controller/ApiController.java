@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ims.dao.EntMapper;
-import com.ims.entity.Menu;
+import com.ims.entity.*;
 import com.ims.util.Common;
+import com.ims.util.JWT;
+import com.ims.util.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +29,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.ims.dao.INewsDAO;
 import com.ims.dao.IUserDAO;
 import com.ims.dao.IWorksDAO;
-import com.ims.entity.News;
-import com.ims.entity.User;
-import com.ims.entity.Works;
 import com.ims.util.Crawler;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -83,32 +82,31 @@ public class ApiController {
 
 
 
-	@RequestMapping(value="/login", method={RequestMethod.POST})
+	@RequestMapping("/login")
 	@ResponseBody
-	public Object login(HttpServletRequest request, HttpServletResponse response){
-		response.setHeader("Access-Control-Allow-Origin", "*"); 
-		String yhm = request.getParameter("userName");
-		String mm = request.getParameter("password");
-		System.out.println("用户名："+yhm);
-		System.out.println("密码："+mm);
-		Map<String,String> info = new HashMap<String, String>();
-		info.put("code", "1");
-		info.put("message", "登录提示");
-		
+	public ResponseData login(HttpServletRequest request, HttpServletResponse response){
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		System.out.println("用户名："+username);
+		System.out.println("密码："+password);
+		Login login = new Login();
+		login.setUsername(username);
+		login.setPassword(password);
+		ResponseData responseData = ResponseData.ok();
+		Integer uid = userDAO.checkLogin("abc","1234");
+		if(null != uid){
+			User user = userDAO.findById(uid);
+			login.setUid(uid);
+			String token = JWT.sign(login,60L*1000L*30L); //给用户jwt加密生成token,有效时间为30分钟
+			//封装成对象返回给客户端
+			responseData.putDataValue("uid",login.getUid());
+			responseData.putDataValue("token",token);
+			responseData.putDataValue("user",user);
 
-		RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-		request = ((ServletRequestAttributes) ra).getRequest();
-		Object attribute = request.getSession().getAttribute("info");
-		if(attribute == null){
-			request.getSession().setAttribute("info", info);
+		}else{
+			responseData = ResponseData.customerError();
 		}
-		try {
-			response.getWriter().write(attribute.toString());;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return attribute;   //返回json格式的信息
+		return responseData;
 		
 	}
 	@RequestMapping("/loginaction")
