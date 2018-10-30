@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,10 @@ import com.ims.entity.*;
 import com.ims.util.Common;
 import com.ims.util.JWT;
 import com.ims.util.ResponseData;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +39,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class ApiController {
+
+
 
 	@Autowired
 	private IUserDAO userDAO;
@@ -81,35 +88,116 @@ public class ApiController {
 
 
 
+    @RequestMapping("login")
+    public ModelAndView toLogin() {
+		return new ModelAndView("login");
+    }
 
-	@RequestMapping("/login")
-	@ResponseBody
-	public ResponseData login(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping(value = "login1",method = RequestMethod.POST)
+    public ModelAndView shirologin1(HttpServletRequest request, HttpServletResponse response) {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		System.out.println("用户名："+username);
-		System.out.println("密码："+password);
+		Map<String,Object> map = new HashMap<String, Object>();
+        System.out.println("shiro登录");
+        Login login = new Login();
+        login.setUsername(username);
+        login.setPassword(password);
+        Integer uid = userDAO.checkLogin(username,password);
+        if(null != uid){
+			try {
+				User user = userDAO.findById(uid);
+				login.setUid(uid);
+				String token = new JWT().sign(login,60L* 1000L* 30L);
+
+				UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(token, token);
+				Subject subject = SecurityUtils.getSubject();
+				subject.login(usernamePasswordToken);
+				map.put("user",user);
+				map.put("token",token);
+				response.addHeader("Authorization",token);
+				return new ModelAndView("main",map);
+
+			} catch (Exception e) {
+				map.put("error",e.getMessage());
+				return new ModelAndView("login",map);
+			}
+
+		}else{
+        	map.put("error","用户名或密码错误！");
+			return new ModelAndView("login",map);
+		}
+
+
+    }
+
+	@RequestMapping(value = "login",method = RequestMethod.POST)
+	public ResponseData shirologin(String username, String password) {
+		System.out.println("shiro登录");
 		Login login = new Login();
 		login.setUsername(username);
 		login.setPassword(password);
 		ResponseData responseData = ResponseData.ok();
-		Integer uid = userDAO.checkLogin("abc","1234");
+		Integer uid = userDAO.checkLogin(username,password);
+		System.out.println("-------------"+uid);
 		if(null != uid){
-			User user = userDAO.findById(uid);
-			login.setUid(uid);
-			String token = JWT.sign(login,60L*1000L*30L); //给用户jwt加密生成token,有效时间为30分钟
-			//封装成对象返回给客户端
-			responseData.putDataValue("uid",login.getUid());
-			responseData.putDataValue("token",token);
-			responseData.putDataValue("user",user);
+			try {
+				User user = userDAO.findById(uid);
+				login.setUid(uid);
+
+				System.out.println("id:"+login.getUid());
+				System.out.println("username:"+login.getUsername());
+				System.out.println("password:"+login.getPassword());
+				String token = new JWT().sign(login,60L* 1000L* 30L);
+				responseData.putDataValue("uid",login.getUid());
+				responseData.putDataValue("token",token);
+				responseData.putDataValue("user",user);
+				UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(token, token);
+				Subject subject = SecurityUtils.getSubject();
+				subject.login(usernamePasswordToken);
+				responseData.putDataValue("success","true");
+			} catch (Exception e) {
+				responseData.putDataValue("error",e.getMessage());
+			}
 
 		}else{
 			responseData = ResponseData.customerError();
 		}
 		return responseData;
-		
+
 	}
-	@RequestMapping("/loginaction")
+
+    @RequestMapping("user")
+    public String toUser(){
+        System.out.println("进入 user");
+        return "welcome to user";
+    }
+
+    @RequestMapping("admin")
+    public String toAdmin(){
+        return "welcome to admin";
+    }
+
+    @RequestMapping("unauthorized")
+    public String unAuth(){
+        return "unauthorized";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @RequestMapping("/loginaction")
 	public void loginaction(final HttpServletRequest request, ModelMap modelMap,HttpServletResponse response){
 		response.setHeader("Access-Control-Allow-Origin", "*"); 
 		String yhm = request.getParameter("userName");

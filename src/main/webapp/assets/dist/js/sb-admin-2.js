@@ -45,3 +45,10 @@ $(function() {
         }
     }
 });
+
+document.write("<script language=javascript src='assets/dist/js/jquery.cookie.js'></script>");
+function logout(){
+    alert("确定退出？");
+    $.removeCookie("token");
+    window.location.href ="login";
+}

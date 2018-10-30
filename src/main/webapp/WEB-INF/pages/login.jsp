@@ -38,33 +38,32 @@
 
 </head>
 
-<body>
-
+<body onload="getCookie()">
     <div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Please Sign In</h3>
+                        <h3 class="panel-title">请登录</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form">
+
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
+                                    <input class="form-control" placeholder="用户名" name="username" id="username" type="text" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="密码" name="password" id="password" type="password" value="">
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input name="remember" type="checkbox" value="Remember Me">Remember Me
+                                        <input name="rememberMe" id="rememberMe" type="checkbox">记住我
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <a href="index" class="btn btn-lg btn-success btn-block">Login</a>
+                                    <button class="btn btn-lg btn-success btn-block" onclick="getlogin()">登录</button>
                             </fieldset>
-                        </form>
+
                     </div>
                 </div>
             </div>
@@ -82,6 +81,86 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="assets/dist/js/sb-admin-2.js"></script>
+    <script src="assets/dist/js/jquery.cookie.js"></script>
+    <script src="assets/dist/js/jquery.base64.js"></script>
+
+    <script type="text/javascript">
+        $("#rememberMe").click(function () {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            var checked = $("#rememberMe:checked");
+            if(checked){
+                $.cookie("ims_login_username",username);
+                $.cookie("ims_login_password",$.base64.encode(password));
+            }else{
+                $.removeCookie("ims_login_username");
+                $.removeCookie("ims_login_password");
+            }
+        });
+
+        function getCookie(){
+            var username = $.cookie("ims_login_username");
+            var password = $.cookie("ims_login_password");
+            if(password){
+                $("#rememberMe").attr("checked","true");
+            }
+            if(username){
+                $("#username").val(username);
+            }
+            if(password){
+                $("#password").val($.base64.decode(password));
+            }
+        }
+
+
+
+
+        function getlogin(){
+
+            alert($("#username").val());
+            alert($("#password").val());
+
+            $.ajax({
+                type: "post",
+                url: "login",
+                data:{
+                    "username":$("#username").val(),
+                    "password":$("#password").val()
+                },
+                dataType:"json",
+                xhrFields:{withCredentials:true},
+                beforeSend: function(XMLHttpRequest){
+                },
+
+                //请求成功回调
+                success: function(data){
+                    alert("进来了");
+                    alert("登录状态："+data.data.success);
+                    alert("token令牌："+data.data.token);
+                    alert("消息："+data.message);
+                    if(data.data.success){
+
+                        // localStorage.setItem("token",data.data.token);
+                        $.cookie("token",data.data.token,{ expires: 7 });// 创建一个cookie并设置有效时间为7天
+
+                        window.location.href ="main";
+
+                    }
+
+                },
+                complete: function(XMLHttpRequest, textStatus){
+
+                },
+                error: function(){
+                    alert("请求网络失败！。。。。。。");
+                }
+            });
+        }
+
+
+
+    </script>
+
 
 </body>
 

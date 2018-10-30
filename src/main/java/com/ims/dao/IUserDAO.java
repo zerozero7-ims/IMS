@@ -15,6 +15,6 @@ public interface IUserDAO {
 	public User findById(int id);
 	public List<User> findAll();
 
-	public int checkLogin(String username,String password);
+	public Integer checkLogin(String username,String password);
 
 }

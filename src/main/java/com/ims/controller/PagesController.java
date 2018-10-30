@@ -139,12 +139,6 @@ public class PagesController {
         return mv;
     }
 
-    @RequestMapping("/login")
-    public ModelAndView login(){
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("login");
-        return mv;
-    }
 
     @RequestMapping("/nestablelist")
     public ModelAndView nestablelist(){

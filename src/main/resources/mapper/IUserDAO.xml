@@ -53,7 +53,7 @@
     </select>
 
 	<!-- 登录认证，返回用户id -->
-	<select id="checkLogin" resultType="int">
+	<select id="checkLogin" resultType="Integer">
 		SELECT id FROM user where username=#{0} and password=#{1}
     </select>
 

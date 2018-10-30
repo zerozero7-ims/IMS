@@ -15,18 +15,6 @@ public class IndexController {
 	@Resource(name = "entMapper")
 	private EntMapper _e;
 
-	@RequestMapping("/search")
-	public ModelAndView search(){
-
-		Map<String, Object> map = new HashMap<>();
-
-		String types = "SELECT * FROM dict t where t.pid=(select id from dict where name='档案类型') order by id";
-		String years = "select makedate from filelist group by makedate order by makedate desc";
-		map.put("years",_e.r(years));
-		map.put("types",_e.r(types));
-		return new ModelAndView("search/search", map);
-	}
-
 	@RequestMapping("/main")
 	public ModelAndView main(){
 		ModelAndView mv = new ModelAndView();
