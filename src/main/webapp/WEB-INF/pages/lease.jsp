@@ -146,7 +146,6 @@
                     for(var i in data.data){
                         var lease = data.data[i].lease;
                         lease.id=i;
-                        alert("lease:"+JSON.stringify(lease));
                         leases.push(JSON.stringify(lease));
                     }
                     result.leases = "["+leases.toString()+"]";
