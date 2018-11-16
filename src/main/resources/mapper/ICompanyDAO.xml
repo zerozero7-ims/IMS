@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 其中命名空间指向与该文件同名的DAO层接口 -->
+<mapper namespace="com.ims.dao.ICompanyDAO">
+
+	<!-- 通过resultMap解决实体类属性与数据库字段名不一致的问题 -->
+	<resultMap type="com.ims.entity.Company" id="companyResult">
+		<!-- 其中id为主键，result为普通字段 -->
+		<!-- property对应实体类属性，column对应数据库字段名（查询结果集中的字段名） -->
+		<id property="id" column="id" />
+		<result property="companyname" column="companyname" />
+		<result property="orgcode" column="orgcode" />
+		<result property="projectname" column="projectname" />
+		<result property="legalpersonname" column="legalpersonname" />
+		<result property="contactname" column="contactname" />
+		<result property="contactphone" column="contactphone" />
+		<result property="regdate" column="regdate" />
+		<result property="regaddr" column="regaddr" />
+		<result property="regcapital" column="regcapital" />
+		<result property="nationaltax" column="nationaltax" />
+		<result property="localtax" column="localtax" />
+		<result property="officenum" column="officenum" />
+		<result property="email" column="email" />
+		<result property="isgraduation" column="isgraduation" />
+		<result property="istalent" column="istalent" />
+		<result property="iscount" column="iscount" />
+		<result property="currevenue" column="currevenue" />
+		<result property="lastrevenue" column="lastrevenue" />
+		<result property="curtax" column="curtax" />
+		<result property="lasttax" column="lasttax" />
+		<result property="admissiontime" column="admissiontime" />
+		<result property="hatchtime" column="hatchtime" />
+		<result property="exittime" column="exittime" />
+		<result property="rentarea" column="rentarea" />
+		<result property="unitprice" column="unitprice" />
+		<result property="roomnum" column="roomnum" />
+		<result property="paytype" column="paytype" />
+		<result property="totalrent" column="totalrent" />
+		<result property="paystatus" column="paystatus" />
+		<result property="qualifications" column="qualifications" />
+		<result property="intellectual" column="intellectual" />
+		<result property="additional" column="additional" />
+	</resultMap>
+	
+	<!-- 增删改查 -->
+	<insert id="add"  parameterType="java.lang.String">
+		${_parameter}
+	</insert>
+	<delete id="del"  parameterType="java.lang.String">
+		${_parameter}
+	</delete>
+	<update id="alter"  parameterType="java.lang.String">
+		${_parameter}
+	</update>
+	<select id="query" resultMap="companyResult" parameterType="String">
+		${_parameter}
+	</select>
+	
+	 <!-- 插入数据后获得自增主键的值 -->
+	<insert id="insert" keyProperty="id" keyColumn="id">
+		INSERT INTO company(companyname,orgcode,projectname,legalpersonname,contactname,
+		contactphone,regdate,regaddr,regcapital,nationaltax,localtax,officenum,email,isgraduation,
+		istalent,iscount,currevenue,lastrevenue,curtax,lasttax,admissiontime,hatchtime,exittime,
+		rentarea,unitprice,roomnum,paytype,totalrent,paystatus,qualifications,intellectual,additional)
+		VALUES(#{companyname},#{orgcode},#{projectname},#{legalpersonname},#{contactname},
+		#{contactphone},#{regdate},#{regaddr},#{regcapital},#{nationaltax},#{localtax},#{officenum},#{email},#{isgraduation},
+		#{istalent},#{iscount},#{currevenue},#{lastrevenue},#{curtax},#{lasttax},#{admissiontime},#{hatchtime},#{exittime},
+		#{rentarea},#{unitprice},#{roomnum},#{paytype},#{totalrent},#{paystatus},#{qualifications},#{intellectual},#{additional})
+	</insert>
+	<!-- 修改用户内容 -->
+	<update id="update">
+		UPDATE company set companyname=#{companyname},orgcode=#{orgcode},projectname=#{projectname},legalpersonname=#{legalpersonname},
+		contactname=#{contactname},contactphone=#{contactphone},regdate=#{regdate},regaddr=#{regaddr},regcapital=#{regcapital},
+		nationaltax=#{nationaltax},localtax=#{localtax},officenum=#{officenum},email=#{email},isgraduation=#{isgraduation},istalent=#{istalent},
+		iscount=#{iscount},currevenue=#{currevenue},lastrevenue=#{lastrevenue},curtax=#{curtax},lasttax=#{lasttax},admissiontime=#{admissiontime},
+		hatchtime=#{hatchtime},exittime=#{exittime},rentarea=#{rentarea},unitprice=#{unitprice},roomnum=#{roomnum},paytype=#{paytype},
+		totalrent=#{totalrent},paystatus=#{paystatus},qualifications=#{qualifications},intellectual=#{intellectual},additional=#{additional}
+ 		WHERE id=#{id}
+	</update>
+	<!-- 根据id删除用户 -->
+    <delete id="delete">
+        DELETE FROM company WHERE id=#{id}
+    </delete>
+	<!-- 根据id查询用户 -->
+	<select id="findById" resultMap="companyResult">
+		SELECT * FROM company WHERE id=#{id}
+	</select>
+    <!-- 查询所有用户 -->
+	<select id="findAll" resultMap="companyResult">
+		SELECT * FROM company
+    </select>
+
+	<select id="findcurrByRoomnum" resultMap="companyResult">
+		SELECT * FROM company WHERE roomnum=#{roomnum} AND CURRENT_DATE BETWEEN admissiontime AND exittime
+	</select>
+
+
+</mapper>

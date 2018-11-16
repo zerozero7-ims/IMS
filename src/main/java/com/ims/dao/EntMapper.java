@@ -31,4 +31,5 @@ public interface EntMapper {
 	
 	List<Map<String, Object>> getnav();
 	List<Map<String, Object>> getzlmlist(Object id);
+
 } 

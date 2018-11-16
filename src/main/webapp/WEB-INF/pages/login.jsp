@@ -131,13 +131,8 @@
                 xhrFields:{withCredentials:true},
                 beforeSend: function(XMLHttpRequest){
                 },
-
                 //请求成功回调
                 success: function(data){
-                    alert("进来了");
-                    alert("登录状态："+data.data.success);
-                    alert("token令牌："+data.data.token);
-                    alert("消息："+data.message);
                     if(data.data.success){
 
                         // localStorage.setItem("token",data.data.token);

@@ -1,40 +1,29 @@
 package com.ims.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ims.dao.EntMapper;
+import com.ims.dao.IBuildingDAO;
+import com.ims.dao.ICompanyDAO;
 import com.ims.entity.*;
-import com.ims.util.Common;
 import com.ims.util.JWT;
 import com.ims.util.ResponseData;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.*;
 
-import com.ims.dao.INewsDAO;
 import com.ims.dao.IUserDAO;
-import com.ims.dao.IWorksDAO;
-import com.ims.util.Crawler;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
@@ -44,29 +33,35 @@ public class ApiController {
 
 	@Autowired
 	private IUserDAO userDAO;
-
 	@Autowired
-	private INewsDAO newsDAO;
-
+	private ICompanyDAO companyDAO;
 	@Autowired
-	private IWorksDAO worksDAO;
+	private IBuildingDAO buildingDAO;
+
 	@Resource(name = "entMapper")
 	private EntMapper _e;
 
-	@RequestMapping("/updateuser")
+	@RequestMapping("/useraction")
 	@ResponseBody
-	public Object updateuser(@RequestBody User user){
-		System.out.println("-------------------------");
-		System.out.println("用户名："+user.getUsername());
-		System.out.println("密码："+user.getPassword());
-		System.out.println("用户类型："+user.getUsertype());
-		System.out.println("-------------------------");
+	public Object useraction(@RequestParam("action") String action, @RequestParam("users") String userlist){
+       List<User> users = new ArrayList<User>();
+       users = JSONArray.parseArray(userlist,User.class);
+       List<User> ulist = new ArrayList<>();
+	    for(User user:users) {
+	        if("edit".equals(action)){
+                userDAO.update(user);
+                ulist.add(user);
+            }else if("create".equals(action)){
+	            userDAO.insert(user);
+                ulist.add(user);
+            }else if("remove".equals(action)){
+	            userDAO.delete(user.getId());
+            }
 
-		Map<String, String> map=new HashMap<String,String>();
-		map.put("status", "ok");
-		map.put("currentAuthority", "admin");
+        }
 
-
+        Map<String, Object> map = new HashMap<String, Object>();
+	    map.put("data", ulist);
 		return map;   //返回json格式的信息
 	}
 	@RequestMapping("/userlist")
@@ -79,55 +74,188 @@ public class ApiController {
 		return map;
 	}
 
-
-
-
-
-
-
-
-
-
-    @RequestMapping("login")
-    public ModelAndView toLogin() {
-		return new ModelAndView("login");
-    }
-
-    @RequestMapping(value = "login1",method = RequestMethod.POST)
-    public ModelAndView shirologin1(HttpServletRequest request, HttpServletResponse response) {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		Map<String,Object> map = new HashMap<String, Object>();
-        System.out.println("shiro登录");
-        Login login = new Login();
-        login.setUsername(username);
-        login.setPassword(password);
-        Integer uid = userDAO.checkLogin(username,password);
-        if(null != uid){
-			try {
-				User user = userDAO.findById(uid);
-				login.setUid(uid);
-				String token = new JWT().sign(login,60L* 1000L* 30L);
-
-				UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(token, token);
-				Subject subject = SecurityUtils.getSubject();
-				subject.login(usernamePasswordToken);
-				map.put("user",user);
-				map.put("token",token);
-				response.addHeader("Authorization",token);
-				return new ModelAndView("main",map);
-
-			} catch (Exception e) {
-				map.put("error",e.getMessage());
-				return new ModelAndView("login",map);
+	@RequestMapping("/companyaction")
+	@ResponseBody
+	public Object companyaction(@RequestParam("action") String action, @RequestParam("companys") String companylist){
+		List<Company> companys = new ArrayList<Company>();
+		companys = JSONArray.parseArray(companylist,Company.class);
+		List<Company> comlist = new ArrayList<>();
+		for(Company company:companys) {
+			if("edit".equals(action)){
+				companyDAO.update(company);
+				comlist.add(company);
+			}else if("create".equals(action)){
+				companyDAO.insert(company);
+				comlist.add(company);
+			}else if("remove".equals(action)){
+				companyDAO.delete(company.getId());
 			}
 
-		}else{
-        	map.put("error","用户名或密码错误！");
-			return new ModelAndView("login",map);
 		}
 
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", comlist);
+		return map;   //返回json格式的信息
+	}
 
+
+	@RequestMapping("/companylist")
+	@ResponseBody
+	public Object companylist(){
+		List<Company> comlist = new ArrayList<>();
+		comlist = companyDAO.findAll();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", comlist);
+		return map;
+	}
+
+
+	@RequestMapping("/leaseaction")
+	@ResponseBody
+	public Object leaseaction(@RequestParam("action") String action, @RequestParam("leases") String leaselist){
+		List<Map<String, Object>> bclist = new ArrayList<>();
+		List<Building> leases = new ArrayList<Building>();
+		leases = JSONArray.parseArray(leaselist,Building.class);
+		for(Building lease:leases) {
+			Map<String, Object> temp = new HashMap<String, Object>();
+			if("edit".equals(action)){
+				lease.setBuildingtype(0);
+				buildingDAO.update(lease);
+				temp.put("lease",lease);
+				bclist.add(temp);
+			}else if("create".equals(action)){
+				lease.setBuildingtype(0);
+				buildingDAO.insert(lease);
+				temp.put("lease",lease);
+				bclist.add(temp);
+			}else if("remove".equals(action)){
+				buildingDAO.delete(lease.getId());
+			}
+
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", bclist);
+		return map;   //返回json格式的信息
+	}
+
+	@RequestMapping("/leaselist")
+	@ResponseBody
+	public Object leaselist(){
+		List<Map<String, Object>> bclist = new ArrayList<>();
+		List<Building> leases = new ArrayList<Building>();
+		leases = buildingDAO.findAllbyBuildingtype(0);
+		for(Building lease:leases){
+			Map<String, Object> temp = new HashMap<String, Object>();
+			Company company = companyDAO.findcurrByRoomnum(lease.getRoomnum());
+			temp.put("lease",lease);
+			temp.put("company",company);
+
+			bclist.add(temp);
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", bclist);
+		return map;
+	}
+
+	@RequestMapping("/matchingaction")
+	@ResponseBody
+	public Object matchingaction(@RequestParam("action") String action, @RequestParam("matchings") String matchinglist){
+		List<Map<String, Object>> malist = new ArrayList<>();
+		List<Building> matchings = new ArrayList<Building>();
+		matchings = JSONArray.parseArray(matchinglist,Building.class);
+		for(Building matching:matchings) {
+			Map<String, Object> temp = new HashMap<String, Object>();
+			if("edit".equals(action)){
+				matching.setBuildingtype(2);
+				buildingDAO.update(matching);
+				temp.put("matching",matching);
+				malist.add(temp);
+			}else if("create".equals(action)){
+				matching.setBuildingtype(2);
+				buildingDAO.insert(matching);
+				temp.put("matching",matching);
+				malist.add(temp);
+			}else if("remove".equals(action)){
+				buildingDAO.delete(matching.getId());
+			}
+
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", malist);
+		return map;   //返回json格式的信息
+	}
+
+	@RequestMapping("/matchinglist")
+	@ResponseBody
+	public Object matchinglist(){
+		List<Map<String, Object>> bclist = new ArrayList<>();
+		List<Building> matchings = new ArrayList<Building>();
+		matchings = buildingDAO.findAllbyBuildingtype(2);
+		for(Building matching:matchings){
+			Map<String, Object> temp = new HashMap<String, Object>();
+			Company company = companyDAO.findcurrByRoomnum(matching.getRoomnum());
+			temp.put("matching",matching);
+			temp.put("company",company);
+
+			bclist.add(temp);
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", bclist);
+		return map;
+	}
+
+	@RequestMapping("/ownaction")
+	@ResponseBody
+	public Object ownaction(@RequestParam("action") String action, @RequestParam("owns") String ownlist){
+		List<Building> owns = new ArrayList<Building>();
+		owns = JSONArray.parseArray(ownlist,Building.class);
+		List<Building> olist = new ArrayList<>();
+		for(Building own:owns) {
+			if("edit".equals(action)){
+				own.setBuildingtype(1);
+				buildingDAO.update(own);
+				olist.add(own);
+			}else if("create".equals(action)){
+				own.setBuildingtype(1);
+				buildingDAO.insert(own);
+				olist.add(own);
+			}else if("remove".equals(action)){
+				buildingDAO.delete(own.getId());
+			}
+
+		}
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", olist);
+		return map;   //返回json格式的信息
+	}
+
+
+	@RequestMapping("/ownlist")
+	@ResponseBody
+	public Object ownlist(){
+		List<Building> ownlist = new ArrayList<Building>();
+		ownlist = buildingDAO.findAllbyBuildingtype(1);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("data", ownlist);
+		return map;
+	}
+
+
+
+
+
+
+
+
+
+
+
+	@RequestMapping("login")
+    public ModelAndView toLogin() {
+		return new ModelAndView("login");
     }
 
 	@RequestMapping(value = "login",method = RequestMethod.POST)
@@ -216,27 +344,7 @@ public class ApiController {
 		
 	}
 
-	@RequestMapping("/api/login/account1")
-	@ResponseBody
-	public Object account1(HttpServletRequest request, HttpServletResponse response){
-		response.setContentType("text/json;character=utf-8"); 
-		response.setCharacterEncoding("utf-8");
-        response.setHeader("Cache-Control", "no-cache");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        
-        String yhm = request.getParameter("userName");
-		String mm = request.getParameter("password");
-		String params = request.getParameter("params");
-		System.out.println("params："+params);
-		System.out.println("用户名："+yhm);
-		System.out.println("密码："+mm);
-		
-		List<News> newslist = new ArrayList<News>();
-		newslist = this.newsDAO.findAll();
 
-		
-		return newslist;   //返回json格式的信息
-	}
 	
 	@RequestMapping("/api/login/account")
 	@ResponseBody

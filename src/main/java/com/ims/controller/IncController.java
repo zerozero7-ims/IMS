@@ -22,13 +22,6 @@ public class IncController {
 
     @RequestMapping("/inc/nav")
     public ModelAndView nav(HttpServletRequest request, HttpServletResponse response){
-        String token = response.getHeader("Authorization");
-        System.out.println("----inc/nav--token--"+token);
-        response.addHeader("Authorization",token);
-
-
-
-
         List<Menu> menuData = new ArrayList<Menu>();
         for(Menu menu:this.menuDAO.findByParentId(0)){
             menu.setChildMenus(getChild(menu.getMenuid()));
@@ -54,14 +47,7 @@ public class IncController {
         return childList;
     }
 
-    @RequestMapping("/common/setting")
-    public ModelAndView setting(){
-        ModelAndView mv = new ModelAndView();
-        mv.addObject("spring","spring mvc");
-        mv.setViewName("common/setting");
-        return mv;
 
-    }
 
 
 

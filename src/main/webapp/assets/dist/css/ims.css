@@ -19,3 +19,140 @@
 .panel-body-ims{
     padding:0;
 }
+.floor-num{
+     float:left;
+     width:10%;
+     position:relative;
+     height:80px;
+     padding:10px;
+     margin-top:10px;
+     border-bottom:1px solid #ddd;
+ }
+
+.floor-room{
+    float:left;
+    width:90%;
+    margin-top:10px;
+}
+
+.floor-col{
+    float:left;
+    position:relative;
+    height:80px;
+    padding:3px;
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border:1px solid #ddd;
+    color: #fff;
+}
+
+.legend-col{
+    float:left;
+    position:relative;
+    height:20px;
+    width:12.5%;
+}
+.legend-col-left{
+    width:4px;
+    height:0;
+    overflow:hidden;
+    float:left;
+    margin:3px 5px 0px 10px;
+}
+
+
+div.DTE_Body div.DTE_Body_Content div.DTE_Field {
+    float: left;
+    width: 50%;
+    padding: 0.6% 2.4%;
+    clear: none;
+    box-sizing: border-box;
+}
+
+div.DTE_Body div.DTE_Form_Content:after {
+    content: ' ';
+    display: block;
+    clear: both;
+}
+
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark label.DTE_Label{
+    width:19%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_paystatus label.DTE_Label{
+    width:19%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications label.DTE_Label{
+    width:19%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual label.DTE_Label{
+    width:19%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional label.DTE_Label{
+    width:19%;
+}
+
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark div.DTE_Field_Input{
+    width:81%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_paystatus div.DTE_Field_Input{
+    width:81%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications div.DTE_Field_Input{
+    width:81%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual div.DTE_Field_Input{
+    width:81%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional div.DTE_Field_Input{
+    width:81%;
+}
+
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark {
+    width:100%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_paystatus {
+    width:100%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications {
+    width:100%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual {
+    width:100%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional {
+    width:100%;
+}
+
+@media only screen and (max-width: 580px){
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark label.DTE_Label{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_paystatus label.DTE_Label{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications label.DTE_Label{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual label.DTE_Label{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional label.DTE_Label{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark div.DTE_Field_Input{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_paystatus div.DTE_Field_Input{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications div.DTE_Field_Input{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual div.DTE_Field_Input{
+        width:100%;
+    }
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional div.DTE_Field_Input{
+        width:100%;
+    }
+}

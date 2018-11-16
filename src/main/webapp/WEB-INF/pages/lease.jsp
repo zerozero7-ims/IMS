@@ -15,7 +15,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>孵化器管理系统 - 用户管理</title>
+    <title>孵化器管理系统 - 对外租赁资源管理</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,6 +30,8 @@
     <link href="assets/vendor/datatables-plugins/select.dataTables.min.css" rel="stylesheet">
 
 
+    <!-- DataTables Responsive CSS -->
+    <link href="assets/vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="assets/dist/css/sb-admin-2.css" rel="stylesheet">
@@ -55,7 +57,7 @@
         <div id="page-wrapper" style="height:100%">
             <div class="row">
                 <div class="col-lg-12">
-                    <h3 class="page-header">用户管理</h3>
+                    <h3 class="page-header">对外租赁资源管理</h3>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -69,17 +71,18 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>用户名</th>
-                                        <th>密码</th>
-                                        <th>用户类型</th>
-                                        <th>账号状态</th>
-                                        <th width="18%">登录时间</th>
-                                        <th>注册时间</th>
+                                        <th>房间号</th>
+                                        <th>面积</th>
+                                        <th>单价</th>
+                                        <th>承租状态</th>
+                                        <th>承租企业名称</th>
+                                        <th>期限</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
 
                             </table>
+
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -104,13 +107,14 @@
     <script src="assets/vendor/metisMenu/metisMenu.min.js"></script>
 
     <script src="assets/vendor/date/moment.min.js"></script>
-
     <!-- DataTables JavaScript -->
     <script src="assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="assets/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
     <script src="assets/vendor/datatables-plugins/dataTables.buttons.min.js"></script>
     <script src="assets/vendor/datatables-plugins/dataTables.editor.min.js"></script>
     <script src="assets/vendor/datatables-plugins/dataTables.select.min.js"></script>
+    <script src="assets/vendor/datatables-plugins/jszip.min.js"></script>
+    <script src="assets/vendor/datatables-plugins/buttons.html5.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
     <script src="assets/dist/js/sb-admin-2.js"></script>
@@ -125,7 +129,7 @@
                     submit:"修改"
                 },
                 remove:{
-                    title:"删除用户",
+                    title:"删除企业",
                     submit:"删除"
                 },
                 datetime: {
@@ -133,113 +137,58 @@
                     weekdays: [  '日','一', '二', '三', '四', '五', '六' ]
                 }
             },
-            // ajax: {
-            //     create:{
-            //       type:'POST',
-            //       url:'/updateuser',
-            //       data:function(data){
-            //           var result={};
-            //           for(var i in data.data){
-            //               var result = data.data[i];
-            //               result.DT_RowId=i;
-            //               result.action=data.action;
-            //               console.log(result.toString());
-            //           }
-            //           return result;
-            //       },
-            //     },
-            //     edit:{
-            //         type:'POST',
-            //         url:'updateuser',
-            //         contentType: "application/json;charset=UTF-8",
-            //         data:function(data){
-            //             var result={};
-            //             for(var i in data.data){
-            //                 var result = data.data[i];
-            //                 result.DT_RowId=i;
-            //                 result.action=data.action;
-            //                 result.id=i;
-            //                 console.log(result.toString());
-            //             }
-            //             return JSON.stringify(result);
-            //         },
-            //     },
-            //     remove:{
-            //         url:'/updateuser',
-            //         data:function(data){
-            //             var result={};
-            //             for(var i in data.data){
-            //                 var result = data.data[i];
-            //                 result.id=i;
-            //                 result.action=data.action;
-            //                 console.log(result.toString());
-            //             }
-            //             return result;
-            //         },
-            //     },
-            // },
             ajax: {
-                url:"useraction",
+                url:"leaseaction",
                 data:function(data){
                     var result = {};
                     result.action=data.action;
-                    var users = [];
+                    var leases = [];
                     for(var i in data.data){
-                        var user = data.data[i];
-                        user.id=i;
-                        users.push(JSON.stringify(user));
+                        var lease = data.data[i].lease;
+                        lease.id=i;
+                        alert("lease:"+JSON.stringify(lease));
+                        leases.push(JSON.stringify(lease));
                     }
-                    result.users = "["+users.toString()+"]";
+                    result.leases = "["+leases.toString()+"]";
                     return result;
                 }
 
             },
             table: "#dataTables-example",
-            idSrc:'id',
+            idSrc:'lease.id',
             fields: [ {
-                label: "用户名:",
-                name: "username"
+                label: "房间号:",
+                name: "lease.roomnum"
             }, {
-                label: "密码:",
-                name: "password"
+                label: "面积:",
+                name: "lease.area"
             }, {
-                label: "用户类型:",
-                name: "usertype",
-                type:"select",
-                options:[
-                    {label:"员工【园区部】",value:"0"},
-                    {label:"员工【招商部】",value:"1"},
-                    {label:"孵化器【综合管理部】",value:"2"},
-                    {label:"管理员【系统维护者】",value:"3"}
-                ]
+                label: "单价:",
+                name: "lease.unitprice",
             }, {
-                label: "账号状态:",
-                name: "userstatus",
-                type:"select",
-                options:[
-                    {label:"正常",value:"1"},
-                    {label:"注销",value:"0"}
-                ]
-            }, {
-                label: "登录时间:",
-                name: "logintime",
+                label: "期限:",
+                name: "lease.term",
+                type:"datetime",
+                format:"YYYY-MM-DD"
 
             }, {
-                label: "注册时间:",
-                name: "regtime",
-                def:function(){return new Date();},
-                type:"datetime",
-                format:"YYYY-MM-DD HH:mm:ss"
+                label: "承租状态:",
+                name: "lease.state",
+                type:"select",
+                options:[
+                    {label:"未出租",value:"0"},
+                    {label:"已出租",value:"1"}
+                ]
             }, {
-                label: "备注:",
-                name: "remark",
-                type:"textarea"
-            }
-            ]
+                label: "楼层:",
+                name: "lease.floor",
+                type:"select",
+                options:[
+                    {label:"1楼",value:"1"},{label:"2楼",value:"2"}, {label:"3楼",value:"3"},{label:"4楼",value:"4"},
+                    {label:"5楼",value:"5"},{label:"6楼",value:"6"}, {label:"7楼",value:"7"},{label:"8楼",value:"8"}
+                ]
+            }]
         } );
-        // $('#dataTables-example').on( 'click', 'tbody td:not(:first-child)', function (e) {
-        //     editor.bubble( this );
-        // } );
 
         // $('#dataTables-example').on( 'click', 'tbody td:not(:first-child)', function (e) {
         //     editor.inline( this );
@@ -247,7 +196,7 @@
 
         var table =$('#dataTables-example').DataTable({
             dom: 'Bfrtilp',
-            ajax:"userlist",
+            ajax:"leaselist",
             order: [[ 1, 'asc' ]],
             columns: [
                 {
@@ -256,34 +205,27 @@
                     className: 'select-checkbox',
                     orderable: false
                 },
-                { data: "username" },
-                { data: "password" },
+                { data: "lease.roomnum" },
+                { data: "lease.area" },
+                { data: "lease.unitprice" },
                 {
-                    data: "usertype" ,
+                    data: "lease.state",
                     render:function (data,type,row) {
-                      if(row.usertype==0){
-                          return '<span class = "label label-success">员工【园区部】</span>'
-                      }else if(row.usertype==1){
-                          return '<span class = "label label-success">员工【招商部】</span>'
-                      }else if(row.usertype==2){
-                          return '<span class = "label label-danger">孵化器【综合管理部】</span>'
-                      }else if(row.usertype==3){
-                          return '<span class = "label label-default">管理员【系统维护者】</span>'
-                      }
-                    }
-                },
-                {
-                    data: "userstatus",
-                    render:function (data,type,row) {
-                        if(row.userstatus==0){
-                            return '<span class = "label label-warning">注销</span>'
-                        }else if(row.userstatus==1){
-                            return '<span class = "label label-info">正常</span>'
+                        if(row.lease.state==0){
+                            return '<span class = "label label-warning">未出租</span>'
+                        }else if(row.lease.state==1){
+                            return '<span class = "label label-info">已出租</span>'
                         }
                     }
                 },
-                { data: "logintime" },
-                { data: "regtime" },
+                { data:function(row,type,set){
+                    if(row.company == null){
+                        return "";
+                    }else{
+                        return row.company.companyname;
+                    }
+                    }},
+                { data: "lease.term" },
                 {
                     data: null,
                     className:"center",
@@ -291,15 +233,23 @@
                     defaultContent:'<a href="" class="editor_edit"><i class="fa fa-edit"></i></a> / <a href="" class="editor_remove"><i class="fa fa-trash-o"></i></a>'
                 }
             ],
+
             select: {
                 style:    'os',
                 selector: 'td:first-child'
             },
             buttons: [
-                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;新建用户</i>'},
-                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改用户</i>'},
-                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除用户</i>'}
+                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加租赁资源</i>'},
+                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改租赁资源</i>'},
+                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除租赁资源</i>'},
+                { extend: "excel", text: '<i class="fa fa-level-up">&nbsp;&nbsp;导出列表</i>',
+                    exportOptions:{
+                        columns:[1,2,3]
+                    }
+
+                }
             ],
+
         });
 
         // Edit record
@@ -330,18 +280,17 @@
             // } );
             editor.modal("show");
         } );
-
         //表单验证
         editor.on("preSubmit",function(e,o,action){
             if(action !== 'remove'){
-                var username = this.field('username');
-                if ( ! username.isMultiValue() ) {
-                    if ( ! username.val() ) {
-                        username.error( '用户名称必填' );
+                var roomnum = this.field('lease.roomnum');
+                if ( ! roomnum.isMultiValue() ) {
+                    if ( ! roomnum.val() ) {
+                        roomnum.error( '房间号必填' );
                     }
 
-                    if ( username.val().length >= 20 ) {
-                        username.error( '用户名称不超过20个字符' );
+                    if ( roomnum.val().length >= 20 ) {
+                        roomnum.error( '房间号填写有误' );
                     }
                 }
                 if ( this.inError() ) {
