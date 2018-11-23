@@ -1,6 +1,7 @@
 package com.ims.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Company implements Serializable {
     private int id;
@@ -32,7 +33,7 @@ public class Company implements Serializable {
     private String roomnum;
     private String paytype;
     private float totalrent;
-    private String paystatus;
+    private List<Payment> paystatus;
     private String qualifications;
     private String intellectual;
     private String additional;
@@ -269,11 +270,11 @@ public class Company implements Serializable {
         this.totalrent = totalrent;
     }
 
-    public String getPaystatus() {
+    public List<Payment> getPaystatus() {
         return paystatus;
     }
 
-    public void setPaystatus(String paystatus) {
+    public void setPaystatus(List<Payment> paystatus) {
         this.paystatus = paystatus;
     }
 

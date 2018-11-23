@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONArray;
-import com.ims.dao.EntMapper;
-import com.ims.dao.IBuildingDAO;
-import com.ims.dao.ICompanyDAO;
+import com.ims.dao.*;
 import com.ims.entity.*;
 import com.ims.util.JWT;
 import com.ims.util.ResponseData;
@@ -23,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import com.ims.dao.IUserDAO;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
@@ -37,6 +34,8 @@ public class ApiController {
 	private ICompanyDAO companyDAO;
 	@Autowired
 	private IBuildingDAO buildingDAO;
+	@Autowired
+	private IPaymentDAO paymentDAO;
 
 	@Resource(name = "entMapper")
 	private EntMapper _e;
@@ -83,11 +82,26 @@ public class ApiController {
 		for(Company company:companys) {
 			if("edit".equals(action)){
 				companyDAO.update(company);
+				for(Payment payment:company.getPaystatus()){
+					if(payment.getId()==0){
+						payment.setCompanyid(company.getId());
+						paymentDAO.insert(payment);
+					}else{
+						paymentDAO.update(payment);
+					}
+				}
 				comlist.add(company);
 			}else if("create".equals(action)){
 				companyDAO.insert(company);
+				for(Payment payment:company.getPaystatus()){
+					payment.setCompanyid(company.getId());
+					paymentDAO.insert(payment);
+				}
 				comlist.add(company);
 			}else if("remove".equals(action)){
+				for(Payment payment:company.getPaystatus()){
+					paymentDAO.delete(payment.getId());
+				}
 				companyDAO.delete(company.getId());
 			}
 
@@ -103,7 +117,10 @@ public class ApiController {
 	@ResponseBody
 	public Object companylist(){
 		List<Company> comlist = new ArrayList<>();
-		comlist = companyDAO.findAll();
+		for(Company company:companyDAO.findAll()){
+			company.setPaystatus(paymentDAO.selectbyCid(company.getId()));
+			comlist.add(company);
+		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", comlist);
 		return map;

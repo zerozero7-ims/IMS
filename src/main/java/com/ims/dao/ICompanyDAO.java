@@ -1,6 +1,7 @@
 package com.ims.dao;
 
 import com.ims.entity.Company;
+import com.ims.entity.Payment;
 
 import java.util.List;
 

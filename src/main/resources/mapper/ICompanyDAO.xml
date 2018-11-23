@@ -36,7 +36,6 @@
 		<result property="roomnum" column="roomnum" />
 		<result property="paytype" column="paytype" />
 		<result property="totalrent" column="totalrent" />
-		<result property="paystatus" column="paystatus" />
 		<result property="qualifications" column="qualifications" />
 		<result property="intellectual" column="intellectual" />
 		<result property="additional" column="additional" />
@@ -61,11 +60,11 @@
 		INSERT INTO company(companyname,orgcode,projectname,legalpersonname,contactname,
 		contactphone,regdate,regaddr,regcapital,nationaltax,localtax,officenum,email,isgraduation,
 		istalent,iscount,currevenue,lastrevenue,curtax,lasttax,admissiontime,hatchtime,exittime,
-		rentarea,unitprice,roomnum,paytype,totalrent,paystatus,qualifications,intellectual,additional)
+		rentarea,unitprice,roomnum,paytype,totalrent,qualifications,intellectual,additional)
 		VALUES(#{companyname},#{orgcode},#{projectname},#{legalpersonname},#{contactname},
 		#{contactphone},#{regdate},#{regaddr},#{regcapital},#{nationaltax},#{localtax},#{officenum},#{email},#{isgraduation},
 		#{istalent},#{iscount},#{currevenue},#{lastrevenue},#{curtax},#{lasttax},#{admissiontime},#{hatchtime},#{exittime},
-		#{rentarea},#{unitprice},#{roomnum},#{paytype},#{totalrent},#{paystatus},#{qualifications},#{intellectual},#{additional})
+		#{rentarea},#{unitprice},#{roomnum},#{paytype},#{totalrent},#{qualifications},#{intellectual},#{additional})
 	</insert>
 	<!-- 修改用户内容 -->
 	<update id="update">
@@ -74,7 +73,7 @@
 		nationaltax=#{nationaltax},localtax=#{localtax},officenum=#{officenum},email=#{email},isgraduation=#{isgraduation},istalent=#{istalent},
 		iscount=#{iscount},currevenue=#{currevenue},lastrevenue=#{lastrevenue},curtax=#{curtax},lasttax=#{lasttax},admissiontime=#{admissiontime},
 		hatchtime=#{hatchtime},exittime=#{exittime},rentarea=#{rentarea},unitprice=#{unitprice},roomnum=#{roomnum},paytype=#{paytype},
-		totalrent=#{totalrent},paystatus=#{paystatus},qualifications=#{qualifications},intellectual=#{intellectual},additional=#{additional}
+		totalrent=#{totalrent},qualifications=#{qualifications},intellectual=#{intellectual},additional=#{additional}
  		WHERE id=#{id}
 	</update>
 	<!-- 根据id删除用户 -->
@@ -93,6 +92,7 @@
 	<select id="findcurrByRoomnum" resultMap="companyResult">
 		SELECT * FROM company WHERE roomnum=#{roomnum} AND CURRENT_DATE BETWEEN admissiontime AND exittime
 	</select>
+
 
 
 </mapper>

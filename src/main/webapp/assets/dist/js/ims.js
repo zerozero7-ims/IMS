@@ -43,6 +43,8 @@
                 var unitprice = $(this).children("td").eq(3).children("input").val();
                 var payment = $(this).children("td").eq(4).children("input").val();
                 var paystate = $(this).children("td").eq(5).children("input").val();
+                var id = $(this).children("input").val();
+                if(id != null && id != undefined && id !=''){ pay.id = id;}
                 if(term != null && term != undefined && term !=''){ pay.term = term;}
                 if(term != null && term != undefined && term !=''){pay.start = start;}
                 if(end != null && end != undefined && end !=''){ pay.end = end;}
@@ -51,19 +53,21 @@
                 if(paystate != null && paystate != undefined && paystate !=''){ pay.paystate = paystate;}
                 if(!isEmptyObject(pay)){ paylist.push(pay);}
             })
-            return JSON.stringify(paylist);
+            return paylist;
 
         },
         set: function ( conf, val ) {
             var sib = $("#pay0",conf._input).siblings();
             sib.remove();
             if(val !=null && val !="" && val != undefined){
-                var obj = JSON.parse(val);
+                // var obj = JSON.parse(val);
+                var obj = val;
                 if(obj != null && obj.length>0){
                     var len = obj.length;
                     for (var i=0;i<len;i++){
                         var html = '';
                         html+='<tr id="pay'+(i+1)+'" selfid ="'+(i+1)+'" >';
+                        html+='<input name="pay[id]" type="hidden" value="'+(obj[i].id?obj[i].id:'')+'" />';
                         html+='<td align="center" style="padding:2px"><input name="pay[term]" type="text" value="'+(obj[i].term?obj[i].term:'')+'" /></td>';
                         html+='<td align="center" style="padding:2px"><input name="pay[start]" type="text" value="'+(obj[i].start?obj[i].start:'')+'" /></td>';
                         html+='<td align="center" style="padding:2px"><input name="pay[end]" type="text" value="'+(obj[i].end?obj[i].end:'')+'" /></td>';
