@@ -37,9 +37,6 @@ public class ApiController {
 	@Autowired
 	private IPaymentDAO paymentDAO;
 
-	@Resource(name = "entMapper")
-	private EntMapper _e;
-
 	@RequestMapping("/useraction")
 	@ResponseBody
 	public Object useraction(@RequestParam("action") String action, @RequestParam("users") String userlist){
