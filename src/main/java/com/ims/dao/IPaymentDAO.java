@@ -16,4 +16,5 @@ public interface IPaymentDAO {
 	public Payment findById(int id);
 	public List<Payment> findAll();
 	public List<Payment> selectbyCid(int companyid);
+	public void deletebyCid(int companyid);
 }

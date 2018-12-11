@@ -88,7 +88,7 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications label.DTE_La
 div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual label.DTE_Label{
     width:19%;
 }
-div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional label.DTE_Label{
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany label.DTE_Label{
     width:19%;
 }
 
@@ -104,7 +104,7 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications div.DTE_Fiel
 div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual div.DTE_Field_Input{
     width:81%;
 }
-div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional div.DTE_Field_Input{
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany div.DTE_Field_Input{
     width:81%;
 }
 
@@ -120,8 +120,11 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_qualifications {
 div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual {
     width:100%;
 }
-div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional {
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany {
     width:100%;
+}
+div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany div.multi-value{
+    pointer-events: none;
 }
 
 @media only screen and (max-width: 580px){
@@ -137,7 +140,7 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional {
     div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual label.DTE_Label{
         width:100%;
     }
-    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional label.DTE_Label{
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany label.DTE_Label{
         width:100%;
     }
     div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark div.DTE_Field_Input{
@@ -152,7 +155,7 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional {
     div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual div.DTE_Field_Input{
         width:100%;
     }
-    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_additional div.DTE_Field_Input{
+    div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany div.DTE_Field_Input{
         width:100%;
     }
 }

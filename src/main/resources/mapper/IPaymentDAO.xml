@@ -59,6 +59,10 @@
 		SELECT * FROM payment where companyid=#{companyid}
     </select>
 
+	<delete id="deletebyCid">
+		DELETE FROM payment WHERE companyid=#{companyid}
+	</delete>
+
 
 
 

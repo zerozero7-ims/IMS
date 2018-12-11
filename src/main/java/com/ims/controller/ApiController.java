@@ -1,9 +1,7 @@
 package com.ims.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 @RestController
@@ -36,6 +35,8 @@ public class ApiController {
 	private IBuildingDAO buildingDAO;
 	@Autowired
 	private IPaymentDAO paymentDAO;
+	@Autowired
+	private IAttachmentDAO attachmentDAO;
 
 	@RequestMapping("/useraction")
 	@ResponseBody
@@ -72,12 +73,19 @@ public class ApiController {
 
 	@RequestMapping("/companyaction")
 	@ResponseBody
-	public Object companyaction(@RequestParam("action") String action, @RequestParam("companys") String companylist){
+	public Object companyaction(@RequestParam("action") String action, @RequestParam("companys") String companylist, @RequestParam(value="upload",required =false) MultipartFile file){
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		String path = "F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/";
+
+
 		List<Company> companys = new ArrayList<Company>();
 		companys = JSONArray.parseArray(companylist,Company.class);
 		List<Company> comlist = new ArrayList<>();
 		for(Company company:companys) {
 			if("edit".equals(action)){
+
+
 				companyDAO.update(company);
 				for(Payment payment:company.getPaystatus()){
 					if(payment.getId()==0){
@@ -87,6 +95,20 @@ public class ApiController {
 						paymentDAO.update(payment);
 					}
 				}
+				String whereIn = "( 0";
+				for(Attachment attachment:company.getAdditional()){
+					if(attachment.getId()==0){
+						attachment.setPid(company.getId());
+						attachmentDAO.insert(attachment);
+					}else{
+						whereIn+=","+attachment.getId();
+						attachment=attachmentDAO.findById(attachment.getId());
+						attachment.setPid(company.getId());
+						attachmentDAO.update(attachment);
+					}
+				}
+				whereIn+=")";
+				attachmentDAO.del("delete from attachment where id not in "+whereIn+" and pid="+company.getId());
 				comlist.add(company);
 			}else if("create".equals(action)){
 				companyDAO.insert(company);
@@ -97,15 +119,59 @@ public class ApiController {
 				comlist.add(company);
 			}else if("remove".equals(action)){
 				for(Payment payment:company.getPaystatus()){
-					paymentDAO.delete(payment.getId());
+					paymentDAO.deletebyCid(company.getId());
+					attachmentDAO.deletebyPid(company.getId());
 				}
 				companyDAO.delete(company.getId());
 			}
 
 		}
 
-		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", comlist);
+		if(file!=null && !file.isEmpty()){
+			Map<String, Object> f = new HashMap<String, Object>();
+			System.out.println(file.getOriginalFilename());
+			System.out.println(file.getName());
+			System.out.println(file.getSize());
+			f.put("filename",file.getOriginalFilename());
+			f.put("filesize",file.getSize());
+			f.put("id",1);
+			f.put("system_path",path+file.getOriginalFilename());
+			f.put("web_path","assets/upload/"+file.getOriginalFilename());
+			//获取原始文件名
+			String fileName = file.getOriginalFilename();
+			//获取文件类型
+			String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
+			//获取当前时间戳作为文件名，防止上传的文件名出现重名而被覆盖的现象。
+			fileName = new Date().getTime()+fileType;
+
+
+			Attachment attachment = new Attachment();
+			attachment.setFilename(fileName);
+			attachment.setFilesize(file.getSize());
+			attachment.setSystem_path(path+fileName);
+			attachment.setWeb_path("assets/upload/"+fileName);
+			attachmentDAO.insert(attachment);
+
+
+
+
+
+				saveFile(file,path,fileName);
+
+			Map<String, Object> fils = new HashMap<String, Object>();
+			fils.put(String.valueOf(attachment.getId()),attachment);
+			Map<String, Object> fi = new HashMap<String, Object>();
+			fi.put("files",fils);
+			map.put("files",fi);
+			Map<String, Object> u = new HashMap<String, Object>();
+			u.put("id",attachment.getId());
+			map.put("upload",u);
+
+		}
+
+
+
 		return map;   //返回json格式的信息
 	}
 
@@ -116,10 +182,19 @@ public class ApiController {
 		List<Company> comlist = new ArrayList<>();
 		for(Company company:companyDAO.findAll()){
 			company.setPaystatus(paymentDAO.selectbyCid(company.getId()));
+			company.setAdditional(attachmentDAO.selectbyPid(company.getId()));
 			comlist.add(company);
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", comlist);
+		Map<String, Object> fils = new HashMap<String, Object>();
+		for(Attachment attachment:attachmentDAO.findAll()) {
+			fils.put(String.valueOf(attachment.getId()), attachment);
+		}
+		Map<String, Object> fi = new HashMap<String, Object>();
+		fi.put("files",fils);
+		map.put("files",fi);
+
 		return map;
 	}
 
@@ -257,8 +332,47 @@ public class ApiController {
 		return map;
 	}
 
+	@RequestMapping("/filesUpload")
+	@ResponseBody
+	public Object filesUpload(@RequestParam("upload") MultipartFile[] files){
+		String path = "E:/upload/";
+		if(files!=null && files.length>0){
+			for(int i=0; i<files.length; i++){
+				MultipartFile file = files[i];
+				System.out.println(file.getOriginalFilename());
+				System.out.println(file.getName());
+				System.out.println(file.getSize());
+				saveFile(file,path,file.getOriginalFilename());
+			}
+		}
 
 
+
+
+		Map<String, Object> map = new HashMap<String, Object>();
+//		map.put("data", ownlist);
+		return map;
+	}
+
+
+	private boolean saveFile(MultipartFile file, String path, String fileName) {
+		// 判断文件是否为空
+		if (!file.isEmpty()) {
+			try {
+				File filepath = new File(path);
+				if (!filepath.exists())
+					filepath.mkdirs();
+				// 文件保存路径
+				String savePath = path + fileName;
+				// 转存文件
+				file.transferTo(new File(savePath));
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 
 
 

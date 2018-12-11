@@ -242,7 +242,16 @@
                 {label: "缴纳租金情况:", name: "paystatus",type:"paylist"},
                 {label: "企业资质申请情况:", name: "qualifications",type:"textarea"},
                 {label: "企业知识产权申请情况:", name: "intellectual",type:"textarea"},
-                {label: "补充资料:", name: "additional"}]
+                {
+                    label: "补充资料:",
+                    name: "additional[].id",
+                    type:"uploadMany",
+                    display: function ( fileId, counter ) {
+                        // return '<img src="'+editor.file( 'files', fileId ).web_path+'"/>';
+                        return '<a href="'+editor.file( 'files', fileId ).web_path+'" target="_blank">'+editor.file( 'files', fileId ).filename+'</a>';
+                    },
+                    noFileText: 'No files'
+                }]
         } );
 
         // $('#dataTables-example').on( 'click', 'tbody td:not(:first-child)', function (e) {
