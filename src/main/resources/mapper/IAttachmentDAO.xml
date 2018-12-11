@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 其中命名空间指向与该文件同名的DAO层接口 -->
+<mapper namespace="com.ims.dao.IAttachmentDAO">
+
+	<!-- 通过resultMap解决实体类属性与数据库字段名不一致的问题 -->
+	<resultMap type="com.ims.entity.Attachment" id="attachmentResult">
+		<!-- 其中id为主键，result为普通字段 -->
+		<!-- property对应实体类属性，column对应数据库字段名（查询结果集中的字段名） -->
+		<id property="id" column="id"/>
+		<result property="pid" column="pid" />
+		<result property="filename" column="filename" />
+		<result property="filesize" column="filesize" />
+		<result property="system_path" column="system_path" />
+		<result property="web_path" column="web_path" />
+		<result property="attachtype" column="attachtype" />
+
+
+
+	</resultMap>
+
+	<!-- 增删改查 -->
+	<insert id="add"  parameterType="java.lang.String">
+		${_parameter}
+	</insert>
+	<delete id="del"  parameterType="java.lang.String">
+		${_parameter}
+	</delete>
+	<update id="alter"  parameterType="java.lang.String">
+		${_parameter}
+	</update>
+	<select id="query" resultMap="attachmentResult" parameterType="String">
+		${_parameter}
+	</select>
+
+	<!-- 插入数据后获得自增主键的值 -->
+	<insert id="insert" keyProperty="id" keyColumn="id">
+		INSERT INTO attachment(pid,filename,filesize,system_path,web_path,attachtype) VALUES(#{pid},#{filename},#{filesize},#{system_path},#{web_path},#{attachtype})
+	</insert>
+	<!-- 修改用户内容 -->
+	<update id="update">
+		UPDATE attachment set pid=#{pid},filename=#{filename},filesize=#{filesize},system_path=#{system_path},web_path=#{web_path},attachtype=#{attachtype} WHERE id=#{id}
+	</update>
+	<!-- 根据id删除用户 -->
+	<delete id="delete">
+        DELETE FROM attachment WHERE id=#{id}
+    </delete>
+	<!-- 根据id查询用户 -->
+	<select id="findById" resultMap="attachmentResult">
+		SELECT * FROM attachment WHERE id=#{id}
+	</select>
+
+	<!-- 通过楼宇类型查询楼宇资源 -->
+	<select id="findAll" resultMap="attachmentResult">
+		SELECT * FROM attachment
+    </select>
+
+	<select id="selectbyPid" resultMap="attachmentResult">
+		SELECT * FROM attachment where pid=#{pid}
+	</select>
+
+	<delete id="deletebyPid">
+		DELETE FROM attachment WHERE pid=#{pid}
+	</delete>
+
+
+</mapper>
