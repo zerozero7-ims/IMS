@@ -2,7 +2,6 @@ package com.ims.entity;
 
 public class Attachment {
     private int id;
-    private int pid;
     private String filename;
     private long filesize;
     private String system_path;
@@ -15,14 +14,6 @@ public class Attachment {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getPid() {
-        return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
     }
 
     public String getFilename() {

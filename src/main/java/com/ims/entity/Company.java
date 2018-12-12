@@ -36,7 +36,8 @@ public class Company implements Serializable {
     private List<Payment> paystatus;
     private String qualifications;
     private String intellectual;
-    private List<Attachment> additional;
+//    private List<Attachment> additional;
+    private String[] additional;
 
     public int getId() {
         return id;
@@ -294,11 +295,20 @@ public class Company implements Serializable {
         this.intellectual = intellectual;
     }
 
-    public List<Attachment> getAdditional() {
+//    public List<Attachment> getAdditional() {
+//        return additional;
+//    }
+//
+//    public void setAdditional(List<Attachment> additional) {
+//        this.additional = additional;
+//    }
+
+
+    public String[] getAdditional() {
         return additional;
     }
 
-    public void setAdditional(List<Attachment> additional) {
+    public void setAdditional(String[] additional) {
         this.additional = additional;
     }
 }

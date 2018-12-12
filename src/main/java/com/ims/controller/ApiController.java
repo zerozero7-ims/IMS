@@ -76,16 +76,12 @@ public class ApiController {
 	public Object companyaction(@RequestParam("action") String action, @RequestParam("companys") String companylist, @RequestParam(value="upload",required =false) MultipartFile file){
 
 		Map<String, Object> map = new HashMap<String, Object>();
-		String path = "F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/";
-
 
 		List<Company> companys = new ArrayList<Company>();
 		companys = JSONArray.parseArray(companylist,Company.class);
 		List<Company> comlist = new ArrayList<>();
 		for(Company company:companys) {
 			if("edit".equals(action)){
-
-
 				companyDAO.update(company);
 				for(Payment payment:company.getPaystatus()){
 					if(payment.getId()==0){
@@ -95,20 +91,6 @@ public class ApiController {
 						paymentDAO.update(payment);
 					}
 				}
-				String whereIn = "( 0";
-				for(Attachment attachment:company.getAdditional()){
-					if(attachment.getId()==0){
-						attachment.setPid(company.getId());
-						attachmentDAO.insert(attachment);
-					}else{
-						whereIn+=","+attachment.getId();
-						attachment=attachmentDAO.findById(attachment.getId());
-						attachment.setPid(company.getId());
-						attachmentDAO.update(attachment);
-					}
-				}
-				whereIn+=")";
-				attachmentDAO.del("delete from attachment where id not in "+whereIn+" and pid="+company.getId());
 				comlist.add(company);
 			}else if("create".equals(action)){
 				companyDAO.insert(company);
@@ -120,7 +102,6 @@ public class ApiController {
 			}else if("remove".equals(action)){
 				for(Payment payment:company.getPaystatus()){
 					paymentDAO.deletebyCid(company.getId());
-					attachmentDAO.deletebyPid(company.getId());
 				}
 				companyDAO.delete(company.getId());
 			}
@@ -128,6 +109,8 @@ public class ApiController {
 		}
 
 		map.put("data", comlist);
+//文件上传
+		String path = "F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/";
 		if(file!=null && !file.isEmpty()){
 			Map<String, Object> f = new HashMap<String, Object>();
 			System.out.println(file.getOriginalFilename());
@@ -144,20 +127,13 @@ public class ApiController {
 			String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 			//获取当前时间戳作为文件名，防止上传的文件名出现重名而被覆盖的现象。
 			fileName = new Date().getTime()+fileType;
-
-
 			Attachment attachment = new Attachment();
 			attachment.setFilename(fileName);
 			attachment.setFilesize(file.getSize());
 			attachment.setSystem_path(path+fileName);
 			attachment.setWeb_path("assets/upload/"+fileName);
 			attachmentDAO.insert(attachment);
-
-
-
-
-
-				saveFile(file,path,fileName);
+			saveFile(file,path,fileName);
 
 			Map<String, Object> fils = new HashMap<String, Object>();
 			fils.put(String.valueOf(attachment.getId()),attachment);
@@ -182,7 +158,6 @@ public class ApiController {
 		List<Company> comlist = new ArrayList<>();
 		for(Company company:companyDAO.findAll()){
 			company.setPaystatus(paymentDAO.selectbyCid(company.getId()));
-			company.setAdditional(attachmentDAO.selectbyPid(company.getId()));
 			comlist.add(company);
 		}
 		Map<String, Object> map = new HashMap<String, Object>();

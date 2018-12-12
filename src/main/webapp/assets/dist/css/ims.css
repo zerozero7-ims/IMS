@@ -123,9 +123,6 @@ div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_intellectual {
 div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany {
     width:100%;
 }
-div.DTE_Body div.DTE_Body_Content div.DTE_Field_Type_uploadMany div.multi-value{
-    pointer-events: none;
-}
 
 @media only screen and (max-width: 580px){
     div.DTE_Body div.DTE_Body_Content div.DTE_Field_Name_remark label.DTE_Label{

@@ -16,6 +16,4 @@ public interface IAttachmentDAO {
 	public void update(Attachment attachment);
 	public Attachment findById(int id);
 	public List<Attachment> findAll();
-	public List<Attachment> selectbyPid(int pid);
-	public void deletebyPid(int pid);
 }

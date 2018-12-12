@@ -103,7 +103,6 @@
                                         <th>缴纳租金情况</th>
                                         <th>企业资质申请情况</th>
                                         <th>企业知识产权申请情况</th>
-                                        <th>补充资料</th>
                                     </tr>
                                 </thead>
 
@@ -244,7 +243,7 @@
                 {label: "企业知识产权申请情况:", name: "intellectual",type:"textarea"},
                 {
                     label: "补充资料:",
-                    name: "additional[].id",
+                    name: "additional",
                     type:"uploadMany",
                     display: function ( fileId, counter ) {
                         // return '<img src="'+editor.file( 'files', fileId ).web_path+'"/>';
@@ -299,8 +298,7 @@
                 { data: "totalrent" , "visible":false},
                 { data: "paystatus", "visible":false },
                 { data: "qualifications" , "visible":false},
-                { data: "intellectual" , "visible":false},
-                { data: "additional" , "visible":false}
+                { data: "intellectual" , "visible":false}
             ],
 
             select: {
