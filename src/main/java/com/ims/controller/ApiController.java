@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSONArray;
 import com.ims.dao.*;
 import com.ims.entity.*;
+import com.ims.util.ApiCommon;
 import com.ims.util.JWT;
 import com.ims.util.ResponseData;
 import org.apache.shiro.SecurityUtils;
@@ -37,6 +38,8 @@ public class ApiController {
 	private IPaymentDAO paymentDAO;
 	@Autowired
 	private IAttachmentDAO attachmentDAO;
+    @Autowired
+    private IContractDAO contractDAO;
 
 	@RequestMapping("/useraction")
 	@ResponseBody
@@ -110,41 +113,8 @@ public class ApiController {
 
 		map.put("data", comlist);
 //文件上传
-		String path = "F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/";
-		if(file!=null && !file.isEmpty()){
-			Map<String, Object> f = new HashMap<String, Object>();
-			System.out.println(file.getOriginalFilename());
-			System.out.println(file.getName());
-			System.out.println(file.getSize());
-			f.put("filename",file.getOriginalFilename());
-			f.put("filesize",file.getSize());
-			f.put("id",1);
-			f.put("system_path",path+file.getOriginalFilename());
-			f.put("web_path","assets/upload/"+file.getOriginalFilename());
-			//获取原始文件名
-			String fileName = file.getOriginalFilename();
-			//获取文件类型
-			String fileType = fileName.substring(fileName.lastIndexOf("."), fileName.length());
-			//获取当前时间戳作为文件名，防止上传的文件名出现重名而被覆盖的现象。
-			fileName = new Date().getTime()+fileType;
-			Attachment attachment = new Attachment();
-			attachment.setFilename(fileName);
-			attachment.setFilesize(file.getSize());
-			attachment.setSystem_path(path+fileName);
-			attachment.setWeb_path("assets/upload/"+fileName);
-			attachmentDAO.insert(attachment);
-			saveFile(file,path,fileName);
-
-			Map<String, Object> fils = new HashMap<String, Object>();
-			fils.put(String.valueOf(attachment.getId()),attachment);
-			Map<String, Object> fi = new HashMap<String, Object>();
-			fi.put("files",fils);
-			map.put("files",fi);
-			Map<String, Object> u = new HashMap<String, Object>();
-			u.put("id",attachment.getId());
-			map.put("upload",u);
-
-		}
+		ApiCommon apiCommon = new ApiCommon();
+		map=apiCommon.uploadFile(file,map,1,attachmentDAO);
 
 
 
@@ -163,7 +133,7 @@ public class ApiController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", comlist);
 		Map<String, Object> fils = new HashMap<String, Object>();
-		for(Attachment attachment:attachmentDAO.findAll()) {
+		for(Attachment attachment:attachmentDAO.findByType(1)) {
 			fils.put(String.valueOf(attachment.getId()), attachment);
 		}
 		Map<String, Object> fi = new HashMap<String, Object>();
@@ -307,47 +277,58 @@ public class ApiController {
 		return map;
 	}
 
-	@RequestMapping("/filesUpload")
-	@ResponseBody
-	public Object filesUpload(@RequestParam("upload") MultipartFile[] files){
-		String path = "E:/upload/";
-		if(files!=null && files.length>0){
-			for(int i=0; i<files.length; i++){
-				MultipartFile file = files[i];
-				System.out.println(file.getOriginalFilename());
-				System.out.println(file.getName());
-				System.out.println(file.getSize());
-				saveFile(file,path,file.getOriginalFilename());
-			}
-		}
+
+    @RequestMapping("/contractaction")
+    @ResponseBody
+    public Object contractaction(@RequestParam("action") String action, @RequestParam("contracts") String contractlist, @RequestParam(value="upload",required =false) MultipartFile file){
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        List<Contract> contracts = new ArrayList<Contract>();
+        contracts = JSONArray.parseArray(contractlist,Contract.class);
+        List<Contract> conlist = new ArrayList<>();
+        for(Contract contract:contracts) {
+            if("edit".equals(action)){
+                contractDAO.update(contract);
+                conlist.add(contract);
+            }else if("create".equals(action)){
+                contractDAO.insert(contract);
+                conlist.add(contract);
+            }else if("remove".equals(action)){
+                contractDAO.delete(contract.getId());
+            }
+        }
+        map.put("data", conlist);
+
+		ApiCommon apiCommon = new ApiCommon();
+		map=apiCommon.uploadFile(file,map,2,attachmentDAO);
 
 
 
 
-		Map<String, Object> map = new HashMap<String, Object>();
-//		map.put("data", ownlist);
-		return map;
-	}
+        return map;   //返回json格式的信息
+    }
 
 
-	private boolean saveFile(MultipartFile file, String path, String fileName) {
-		// 判断文件是否为空
-		if (!file.isEmpty()) {
-			try {
-				File filepath = new File(path);
-				if (!filepath.exists())
-					filepath.mkdirs();
-				// 文件保存路径
-				String savePath = path + fileName;
-				// 转存文件
-				file.transferTo(new File(savePath));
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
+    @RequestMapping("/contractlist")
+    @ResponseBody
+    public Object contractlist(){
+        List<Contract> conlist = contractDAO.findAll();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("data", conlist);
+        Map<String, Object> fils = new HashMap<String, Object>();
+        for(Attachment attachment:attachmentDAO.findByType(2)) {
+            fils.put(String.valueOf(attachment.getId()), attachment);
+        }
+        Map<String, Object> fi = new HashMap<String, Object>();
+        fi.put("files",fils);
+        map.put("files",fi);
+
+        return map;
+    }
+
+
+
 
 
 

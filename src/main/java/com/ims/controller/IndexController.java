@@ -64,6 +64,13 @@ public class IndexController {
 		return mv;
 	}
 
+	@RequestMapping("/contract")
+	public ModelAndView contract(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("contract");
+		return mv;
+	}
+
 	@RequestMapping("/lease_detail")
 	public ModelAndView lease_detail(){
 		List<Map<String, Object>> floorlist = new ArrayList<Map<String, Object>>();

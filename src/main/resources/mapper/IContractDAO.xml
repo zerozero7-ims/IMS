@@ -13,6 +13,7 @@
 		<result property="partyb" column="partyb" />
 		<result property="partyc" column="partyc" />
 		<result property="term" column="term" />
+		<result property="attachment" column="attachment" typeHandler="com.ims.util.StringArrayTypeHandler"/>
 		<result property="type" column="type" />
 
 
@@ -34,11 +35,11 @@
 
 	<!-- 插入数据后获得自增主键的值 -->
 	<insert id="insert" keyProperty="id" keyColumn="id">
-		INSERT INTO contract(contractnum,partya,partyb,partyc,term,type) VALUES(#{contractnum},#{partya},#{partyb},#{partyc},#{term},#{type})
+		INSERT INTO contract(contractnum,partya,partyb,partyc,term,attachment,type) VALUES(#{contractnum},#{partya},#{partyb},#{partyc},#{term},#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},#{type})
 	</insert>
 	<!-- 修改用户内容 -->
 	<update id="update">
-		UPDATE contract set contractnum=#{contractnum},partya=#{partya},partyb=#{partyb},partyc=#{partyc},term=#{term},type=#{type} WHERE id=#{id}
+		UPDATE contract set contractnum=#{contractnum},partya=#{partya},partyb=#{partyb},partyc=#{partyc},term=#{term},attachment=#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},type=#{type} WHERE id=#{id}
 	</update>
 	<!-- 根据id删除用户 -->
 	<delete id="delete">

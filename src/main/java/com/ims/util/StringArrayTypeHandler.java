@@ -31,9 +31,9 @@ public class StringArrayTypeHandler  implements TypeHandler<String[]> {
 
     public void setParameter(PreparedStatement ps, int i, String[] parameter,
                              JdbcType jdbcType) throws SQLException {
-        if (parameter == null)
+        if (parameter == null || parameter.length == 0){
             ps.setNull(i, Types.VARCHAR);
-        else {
+        }else {
             StringBuffer result = new StringBuffer();
             for (String value : parameter)
                 result.append(value).append(",");

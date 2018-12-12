@@ -54,5 +54,9 @@
 		SELECT * FROM attachment
     </select>
 
+	<select id="findByType" resultMap="attachmentResult">
+		SELECT * FROM attachment WHERE attachtype=#{attachtype}
+	</select>
+
 
 </mapper>

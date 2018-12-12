@@ -36,6 +36,7 @@
     <!-- Custom CSS -->
     <link href="assets/dist/css/sb-admin-2.css" rel="stylesheet">
     <link href="assets/dist/css/ims.css" rel="stylesheet">
+    <link href="assets/vendor/date/bootstrap-datepicker.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -76,6 +77,7 @@
                                 <th>乙方</th>
                                 <th>丙方</th>
                                 <th>合同期限</th>
+                                <th>合同附件</th>
                                 <th>合同类别</th>
                                 <th>操作</th>
                             </tr>
@@ -107,6 +109,8 @@
 <script src="assets/vendor/metisMenu/metisMenu.min.js"></script>
 
 <script src="assets/vendor/date/moment.min.js"></script>
+<script src="assets/vendor/date/bootstrap-datepicker.min.js"></script>
+<script src="assets/vendor/date/bootstrap-datepicker.zh-CN.min.js"></script>
 <!-- DataTables JavaScript -->
 <script src="assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
 <script src="assets/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
@@ -118,6 +122,7 @@
 
 <!-- Custom Theme JavaScript -->
 <script src="assets/dist/js/sb-admin-2.js"></script>
+<script src="assets/dist/js/ims.js"></script>
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script>
@@ -138,17 +143,17 @@
                 }
             },
             ajax: {
-                url:"ownaction",
+                url:"contractaction",
                 data:function(data){
                     var result = {};
                     result.action=data.action;
-                    var owns = [];
+                    var contracts = [];
                     for(var i in data.data){
-                        var own = data.data[i];
-                        own.id=i;
-                        owns.push(JSON.stringify(own));
+                        var contract = data.data[i];
+                        contract.id=i;
+                        contracts.push(JSON.stringify(contract));
                     }
-                    result.owns = "["+owns.toString()+"]";
+                    result.contracts = "["+contracts.toString()+"]";
                     return result;
                 }
 
@@ -156,22 +161,35 @@
             table: "#dataTables-example",
             idSrc:'id',
             fields: [ {
-                label: "房间号:",
-                name: "roomnum"
+                label: "合同编号:",
+                name: "contractnum"
             }, {
-                label: "面积:",
-                name: "area"
+                label: "甲方:",
+                name: "partya"
             }, {
-                label: "用途:",
-                name: "purpose",
+                label: "乙方:",
+                name: "partyb"
             }, {
-                label: "楼层:",
-                name: "floor",
+                label: "丙方:",
+                name: "partyc"
+            }, {
+                label: "合同期限:",
+                name: "term",
+                type: "daterange"
+            }, {
+                label: "合同类别:",
+                name: "type",
                 type:"select",
-                options:[
-                    {label:"1楼",value:"1"},{label:"2楼",value:"2"}, {label:"3楼",value:"3"},{label:"4楼",value:"4"},
-                    {label:"5楼",value:"5"},{label:"6楼",value:"6"}, {label:"7楼",value:"7"},{label:"8楼",value:"8"}
-                ]
+                options:[{label:"入驻合同",value:"1"},{label:"公寓",value:"2"}, {label:"会议室",value:"3"},{label:"储藏室",value:"4"}]
+            }, {
+                label: "合同附件:",
+                name: "attachment",
+                type:"uploadMany",
+                display: function ( fileId, counter ) {
+                    // return '<img src="'+editor.file( 'files', fileId ).web_path+'"/>';
+                    return '<a href="'+editor.file( 'files', fileId ).web_path+'" target="_blank">'+editor.file( 'files', fileId ).filename+'</a>';
+                },
+                noFileText: 'No files'
             }]
         } );
 
@@ -181,7 +199,7 @@
 
         var table =$('#dataTables-example').DataTable({
             dom: 'Bfrtilp',
-            ajax:"ownlist",
+            ajax:"contractlist",
             order: [[ 1, 'asc' ]],
             columns: [
                 {
@@ -190,9 +208,42 @@
                     className: 'select-checkbox',
                     orderable: false
                 },
-                { data: "roomnum" },
-                { data: "area" },
-                { data: "purpose" },
+                { data: "contractnum" },
+                { data: "partya" },
+                { data: "partyb", "visible":false},
+                { data: "partyc", "visible":false},
+                { data: "term" ,
+                  render:function (data,type,row) {
+                    var obj = JSON.parse(row.term);
+                    return obj.start+'至'+obj.end;
+                  }
+
+                },
+                { data: "attachment" ,
+                  render:function ( fileId, counter ) {
+                      // return '<img src="'+editor.file( 'files', fileId ).web_path+'"/>';
+                      var result = '';
+                      if(fileId!=null && fileId!=undefined && fileId!=''){
+                          for(var i=0;i<fileId.length;i++){
+                              result+='<a href="'+editor.file( 'files', fileId[i] ).web_path+'" target="_blank">附件'+(i+1)+'</a>&nbsp;&nbsp;';
+                          }
+                      }
+                      return result;
+                  }
+                },
+                { data: "type",
+                  render:function (data,type,row) {
+                        if(row.type==1){
+                            return '<i class="fa fa-legal fa-fw"></i>入驻合同'
+                        }else if(row.type==2){
+                            return '<i class="fa fa-building-o fa-fw"></i>公寓合同'
+                        }else if(row.type==3){
+                            return '<i class="fa fa-bullseye fa-fw"></i>会议室合同'
+                        }else if(row.type==4){
+                            return '<i class="fa fa-steam fa-fw"></i>储藏室合同'
+                        }
+                   }
+                },
                 {
                     data: null,
                     className:"center",
@@ -206,9 +257,9 @@
                 selector: 'td:first-child'
             },
             buttons: [
-                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加园区自用</i>'},
-                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改园区自用</i>'},
-                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除园区自用</i>'},
+                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加合同</i>'},
+                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改合同</i>'},
+                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除合同</i>'},
                 { extend: "excel", text: '<i class="fa fa-level-up">&nbsp;&nbsp;导出列表</i>',
                     exportOptions:{
                         columns:[1,2,3]
@@ -250,14 +301,14 @@
         //表单验证
         editor.on("preSubmit",function(e,o,action){
             if(action !== 'remove'){
-                var roomnum = this.field('roomnum');
-                if ( ! roomnum.isMultiValue() ) {
-                    if ( ! roomnum.val() ) {
-                        roomnum.error( '房间号必填' );
+                var contractnum = this.field('contractnum');
+                if ( ! contractnum.isMultiValue() ) {
+                    if ( ! contractnum.val() ) {
+                        contractnum.error( '合同编号必填' );
                     }
 
-                    if ( roomnum.val().length >= 20 ) {
-                        roomnum.error( '房间号填写有误' );
+                    if ( contractnum.val().length >= 20 ) {
+                        contractnum.error( '合同编号填写有误' );
                     }
                 }
                 if ( this.inError() ) {

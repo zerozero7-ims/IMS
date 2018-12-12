@@ -7,6 +7,7 @@ public class Contract {
     private String partyb;
     private String partyc;
     private String term;
+    private String[] attachment;
     private int type;
 
     public int getId() {
@@ -55,6 +56,14 @@ public class Contract {
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    public String[] getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(String[] attachment) {
+        this.attachment = attachment;
     }
 
     public int getType() {

@@ -118,7 +118,7 @@
                                                 <fmt:parseDate var="term" value="${combuild.building.term}"/>
                                                     <c:set var="interval" value="${term.time - now.time}"/>
                                                     <fmt:formatNumber var="days" value="${interval/1000/60/60/24}" pattern="#0"/>
-                                                    <c:if test='${days<30}'>#d9534f;</c:if>
+                                                    <c:if test='${days<=30}'>#d9534f;</c:if>
                                                     <c:if test='${days>30 && days <= 365}'>#f0ad4e;</c:if>
                                                     <c:if test='${days>365 && days <= 730}'>#5cb85c;</c:if>
                                                     <c:if test='${days>730 && days <= 1095}'>#5bc0de;</c:if>
