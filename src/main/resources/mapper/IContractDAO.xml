@@ -55,6 +55,14 @@
 		SELECT * FROM contract
 	</select>
 
+	<select id="findEnter" resultMap="contractResult">
+		SELECT * FROM contract WHERE type=1
+	</select>
+
+	<select id="findMatch" resultMap="contractResult">
+		SELECT * FROM contract WHERE type in(2,3,4)
+	</select>
+
 
 
 

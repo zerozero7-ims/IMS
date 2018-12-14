@@ -180,7 +180,7 @@
                 label: "合同类别:",
                 name: "type",
                 type:"select",
-                options:[{label:"入驻合同",value:"1"}]
+                options:[{label:"公寓",value:"2"}, {label:"会议室",value:"3"},{label:"储藏室",value:"4"}]
             }, {
                 label: "合同附件:",
                 name: "attachment",
@@ -199,7 +199,7 @@
 
         var table =$('#dataTables-example').DataTable({
             dom: 'Bfrtilp',
-            ajax:"contractlist",
+            ajax:"contractmatchinglist",
             order: [[ 1, 'asc' ]],
             columns: [
                 {

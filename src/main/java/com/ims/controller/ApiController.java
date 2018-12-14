@@ -40,6 +40,9 @@ public class ApiController {
 	private IAttachmentDAO attachmentDAO;
     @Autowired
     private IContractDAO contractDAO;
+	@Autowired
+	private IFlowDAO flowDAO;
+	ApiCommon apiCommon = new ApiCommon();
 
 	@RequestMapping("/useraction")
 	@ResponseBody
@@ -113,7 +116,6 @@ public class ApiController {
 
 		map.put("data", comlist);
 //文件上传
-		ApiCommon apiCommon = new ApiCommon();
 		map=apiCommon.uploadFile(file,map,1,attachmentDAO);
 
 
@@ -130,17 +132,7 @@ public class ApiController {
 			company.setPaystatus(paymentDAO.selectbyCid(company.getId()));
 			comlist.add(company);
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("data", comlist);
-		Map<String, Object> fils = new HashMap<String, Object>();
-		for(Attachment attachment:attachmentDAO.findByType(1)) {
-			fils.put(String.valueOf(attachment.getId()), attachment);
-		}
-		Map<String, Object> fi = new HashMap<String, Object>();
-		fi.put("files",fils);
-		map.put("files",fi);
-
-		return map;
+		return apiCommon.listCarryFiles(comlist,attachmentDAO,1);
 	}
 
 
@@ -266,7 +258,6 @@ public class ApiController {
 		return map;   //返回json格式的信息
 	}
 
-
 	@RequestMapping("/ownlist")
 	@ResponseBody
 	public Object ownlist(){
@@ -277,11 +268,9 @@ public class ApiController {
 		return map;
 	}
 
-
     @RequestMapping("/contractaction")
     @ResponseBody
     public Object contractaction(@RequestParam("action") String action, @RequestParam("contracts") String contractlist, @RequestParam(value="upload",required =false) MultipartFile file){
-
         Map<String, Object> map = new HashMap<String, Object>();
         List<Contract> contracts = new ArrayList<Contract>();
         contracts = JSONArray.parseArray(contractlist,Contract.class);
@@ -292,19 +281,19 @@ public class ApiController {
                 conlist.add(contract);
             }else if("create".equals(action)){
                 contractDAO.insert(contract);
+                Flow flow = new Flow();
+				flow.setCompanyname(contract.getPartya());
+				flow.setType(1);
+				if(flowDAO.checkflow(flow.getCompanyname())==null || flowDAO.checkflow(flow.getCompanyname())<=0){
+					flowDAO.insert(flow);   //提交合同的同时，需要创建房屋交接记录
+				}
                 conlist.add(contract);
             }else if("remove".equals(action)){
                 contractDAO.delete(contract.getId());
             }
         }
         map.put("data", conlist);
-
-		ApiCommon apiCommon = new ApiCommon();
 		map=apiCommon.uploadFile(file,map,2,attachmentDAO);
-
-
-
-
         return map;   //返回json格式的信息
     }
 
@@ -312,20 +301,136 @@ public class ApiController {
     @RequestMapping("/contractlist")
     @ResponseBody
     public Object contractlist(){
-        List<Contract> conlist = contractDAO.findAll();
-
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("data", conlist);
-        Map<String, Object> fils = new HashMap<String, Object>();
-        for(Attachment attachment:attachmentDAO.findByType(2)) {
-            fils.put(String.valueOf(attachment.getId()), attachment);
-        }
-        Map<String, Object> fi = new HashMap<String, Object>();
-        fi.put("files",fils);
-        map.put("files",fi);
-
-        return map;
+        List<Contract> conlist = contractDAO.findEnter();
+        return apiCommon.listCarryFiles(conlist,attachmentDAO,2);
     }
+    @RequestMapping("/contractmatchinglist")
+    @ResponseBody
+    public Object contractmatchinglist(){
+        List<Contract> conlist = contractDAO.findMatch();
+        return apiCommon.listCarryFiles(conlist,attachmentDAO,2);
+    }
+
+	@RequestMapping("/process_handoverlist")
+	@ResponseBody
+	public Object process_handoverlist(){
+		List<Flow> flowlist = flowDAO.findByType(1);
+		return apiCommon.listCarryFiles(flowlist,attachmentDAO,3);
+	}
+
+	@RequestMapping("/process_handoveraction")
+	@ResponseBody
+	public Object process_handoveraction(@RequestParam("action") String action, @RequestParam("flows") String flowlist, @RequestParam(value="upload",required =false) MultipartFile file){
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Flow> flows = new ArrayList<Flow>();
+		flows = JSONArray.parseArray(flowlist,Flow.class);
+		List<Flow> flist = new ArrayList<>();
+		for(Flow flow:flows) {
+			if("edit".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(1);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.update(flow);
+				flist.add(flow);
+			}else if("create".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(1);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.insert(flow);
+				flist.add(flow);
+			}else if("remove".equals(action)){
+				flowDAO.delete(flow.getId());
+			}
+		}
+		map.put("data", flist);
+
+		map=apiCommon.uploadFile(file,map,3,attachmentDAO);
+		return map;   //返回json格式的信息
+	}
+
+	@RequestMapping("/process_outaction")
+	@ResponseBody
+	public Object process_outaction(@RequestParam("action") String action, @RequestParam("flows") String flowlist, @RequestParam(value="upload",required =false) MultipartFile file){
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Flow> flows = new ArrayList<Flow>();
+		flows = JSONArray.parseArray(flowlist,Flow.class);
+		List<Flow> flist = new ArrayList<>();
+		for(Flow flow:flows) {
+			if("edit".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(2);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.update(flow);
+				flist.add(flow);
+			}else if("create".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(2);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.insert(flow);
+				flist.add(flow);
+			}else if("remove".equals(action)){
+				flowDAO.delete(flow.getId());
+			}
+		}
+		map.put("data", flist);
+		map=apiCommon.uploadFile(file,map,3,attachmentDAO);
+		return map;   //返回json格式的信息
+	}
+
+	@RequestMapping("/process_outlist")
+	@ResponseBody
+	public Object process_outlist(){
+		List<Flow> flowlist = flowDAO.findByType(2);
+		return apiCommon.listCarryFiles(flowlist,attachmentDAO,3);
+	}
+
+	@RequestMapping("/process_repairaction")
+	@ResponseBody
+	public Object process_repairaction(@RequestParam("action") String action, @RequestParam("flows") String flowlist, @RequestParam(value="upload",required =false) MultipartFile file){
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Flow> flows = new ArrayList<Flow>();
+		flows = JSONArray.parseArray(flowlist,Flow.class);
+		List<Flow> flist = new ArrayList<>();
+		for(Flow flow:flows) {
+			if("edit".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(3);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.update(flow);
+				flist.add(flow);
+			}else if("create".equals(action)){
+				if(flow.getAttachment()!=null && flow.getAttachment().length>0){
+					flow.setCurflow(1);
+				}
+				flow.setType(3);
+				System.out.println("curflow:"+flow.getCurflow());
+				flowDAO.insert(flow);
+				flist.add(flow);
+			}else if("remove".equals(action)){
+				flowDAO.delete(flow.getId());
+			}
+		}
+		map.put("data", flist);
+		map=apiCommon.uploadFile(file,map,3,attachmentDAO);
+		return map;   //返回json格式的信息
+	}
+
+	@RequestMapping("/process_repairlist")
+	@ResponseBody
+	public Object process_repairlist(){
+		List<Flow> flowlist = flowDAO.findByType(3);
+		return apiCommon.listCarryFiles(flowlist,attachmentDAO,3);
+	}
 
 
 

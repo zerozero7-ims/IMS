@@ -2,15 +2,29 @@ package com.ims.util;
 
 import com.ims.dao.IAttachmentDAO;
 import com.ims.entity.Attachment;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ApiCommon {
+
+    public Map<String, Object> listCarryFiles(List list, IAttachmentDAO attachmentDAO,int attachtype){ //有上传功能的界面，需同时获取信息列表和文件列表
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("data", list);
+        Map<String, Object> fils = new HashMap<String, Object>();
+        for(Attachment attachment:attachmentDAO.findByType(attachtype)) {
+            fils.put(String.valueOf(attachment.getId()), attachment);
+        }
+        Map<String, Object> fi = new HashMap<String, Object>();
+        fi.put("files",fils);
+        map.put("files",fi);
+
+        return map;
+    }
 
     public Map<String, Object> uploadFile(MultipartFile file,Map<String, Object> map,int attachtype,IAttachmentDAO attachmentDAO){
 

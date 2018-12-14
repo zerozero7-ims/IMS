@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 其中命名空间指向与该文件同名的DAO层接口 -->
+<mapper namespace="com.ims.dao.IFlowDAO">
+
+	<!-- 通过resultMap解决实体类属性与数据库字段名不一致的问题 -->
+	<resultMap type="com.ims.entity.Flow" id="flowResult">
+		<!-- 其中id为主键，result为普通字段 -->
+		<!-- property对应实体类属性，column对应数据库字段名（查询结果集中的字段名） -->
+		<id property="id" column="id"/>
+		<result property="companyname" column="companyname" />
+		<result property="curflow" column="curflow" />
+		<result property="attachment" column="attachment" typeHandler="com.ims.util.StringArrayTypeHandler" />
+		<result property="receiving" column="receiving" />
+		<result property="type" column="type" />
+	</resultMap>
+
+	<!-- 增删改查 -->
+	<insert id="add"  parameterType="java.lang.String">
+		${_parameter}
+	</insert>
+	<delete id="del"  parameterType="java.lang.String">
+		${_parameter}
+	</delete>
+	<update id="alter"  parameterType="java.lang.String">
+		${_parameter}
+	</update>
+	<select id="query" resultMap="flowResult" parameterType="String">
+		${_parameter}
+	</select>
+
+	<!-- 插入数据后获得自增主键的值 -->
+	<insert id="insert" keyProperty="id" keyColumn="id">
+		INSERT INTO flow(companyname,curflow,attachment,receiving,type) VALUES(#{companyname},#{curflow},#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},#{receiving},#{type})
+	</insert>
+	<!-- 修改用户内容 -->
+	<update id="update">
+		UPDATE flow set companyname=#{companyname},curflow=#{curflow},attachment=#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},receiving=#{receiving},type=#{type} WHERE id=#{id}
+	</update>
+	<!-- 根据id删除用户 -->
+	<delete id="delete">
+		DELETE FROM flow WHERE id=#{id}
+	</delete>
+	<!-- 根据id查询用户 -->
+	<select id="findById" resultMap="flowResult">
+		SELECT * FROM flow WHERE id=#{id}
+	</select>
+
+	<!-- 通过楼宇类型查询楼宇资源 -->
+	<select id="findAll" resultMap="flowResult">
+		SELECT * FROM flow
+	</select>
+
+	<select id="findByType" resultMap="flowResult">
+		SELECT * FROM flow WHERE type=#{type}
+	</select>
+
+	<!-- 流程验证，是否已存在该流程 -->
+	<select id="checkflow" resultType="Integer">
+		SELECT id FROM flow WHERE companyname=#{companyname} AND type=1
+	</select>
+
+
+
+
+
+
+</mapper>

@@ -15,4 +15,6 @@ public interface IContractDAO {
 	public void update(Contract contract);
 	public Contract findById(int id);
 	public List<Contract> findAll();
+	public List<Contract> findEnter();
+	public List<Contract> findMatch();
 }

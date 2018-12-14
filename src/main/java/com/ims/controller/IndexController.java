@@ -71,6 +71,34 @@ public class IndexController {
 		return mv;
 	}
 
+	@RequestMapping("/contract_matching")
+	public ModelAndView contract_matching(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("contract_matching");
+		return mv;
+	}
+
+	@RequestMapping("/process_handover")
+	public ModelAndView process_handover(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("process_handover");
+		return mv;
+	}
+
+	@RequestMapping("/process_out")
+	public ModelAndView process_out(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("process_out");
+		return mv;
+	}
+
+	@RequestMapping("/process_repair")
+	public ModelAndView process_repair(){
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("process_repair");
+		return mv;
+	}
+
 	@RequestMapping("/lease_detail")
 	public ModelAndView lease_detail(){
 		List<Map<String, Object>> floorlist = new ArrayList<Map<String, Object>>();

@@ -15,7 +15,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>孵化器管理系统 - 租赁合同</title>
+    <title>孵化器管理系统 - 房屋交接流程</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -58,7 +58,7 @@
     <div id="page-wrapper" style="height:100%">
         <div class="row">
             <div class="col-lg-12">
-                <h3 class="page-header">租赁合同</h3>
+                <h3 class="page-header">房屋交接流程</h3>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -72,13 +72,9 @@
                             <thead>
                             <tr>
                                 <th></th>
-                                <th>合同编号</th>
-                                <th>甲方</th>
-                                <th>乙方</th>
-                                <th>丙方</th>
-                                <th>合同期限</th>
-                                <th>合同附件</th>
-                                <th>合同类别</th>
+                                <th>企业名称</th>
+                                <th>房屋交接单</th>
+                                <th>交接状态</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -143,17 +139,17 @@
                 }
             },
             ajax: {
-                url:"contractaction",
+                url:"process_handoveraction",
                 data:function(data){
                     var result = {};
                     result.action=data.action;
-                    var contracts = [];
+                    var flows = [];
                     for(var i in data.data){
-                        var contract = data.data[i];
-                        contract.id=i;
-                        contracts.push(JSON.stringify(contract));
+                        var flow = data.data[i];
+                        flow.id=i;
+                        flows.push(JSON.stringify(flow));
                     }
-                    result.contracts = "["+contracts.toString()+"]";
+                    result.flows = "["+flows.toString()+"]";
                     return result;
                 }
 
@@ -161,28 +157,10 @@
             table: "#dataTables-example",
             idSrc:'id',
             fields: [ {
-                label: "合同编号:",
-                name: "contractnum"
+                label: "企业名称:",
+                name: "companyname"
             }, {
-                label: "甲方:",
-                name: "partya"
-            }, {
-                label: "乙方:",
-                name: "partyb"
-            }, {
-                label: "丙方:",
-                name: "partyc"
-            }, {
-                label: "合同期限:",
-                name: "term",
-                type: "daterange"
-            }, {
-                label: "合同类别:",
-                name: "type",
-                type:"select",
-                options:[{label:"入驻合同",value:"1"}]
-            }, {
-                label: "合同附件:",
+                label: "房屋交接单:",
                 name: "attachment",
                 type:"uploadMany",
                 display: function ( fileId, counter ) {
@@ -199,7 +177,7 @@
 
         var table =$('#dataTables-example').DataTable({
             dom: 'Bfrtilp',
-            ajax:"contractlist",
+            ajax:"process_handoverlist",
             order: [[ 1, 'asc' ]],
             columns: [
                 {
@@ -208,17 +186,7 @@
                     className: 'select-checkbox',
                     orderable: false
                 },
-                { data: "contractnum" },
-                { data: "partya" },
-                { data: "partyb", "visible":false},
-                { data: "partyc", "visible":false},
-                { data: "term" ,
-                  render:function (data,type,row) {
-                    var obj = JSON.parse(row.term);
-                    return obj.start+'至'+obj.end;
-                  }
-
-                },
+                { data: "companyname" },
                 { data: "attachment" ,
                   render:function ( fileId, counter ) {
                       // return '<img src="'+editor.file( 'files', fileId ).web_path+'"/>';
@@ -231,16 +199,12 @@
                       return result;
                   }
                 },
-                { data: "type",
+                { data: "curflow",
                   render:function (data,type,row) {
-                        if(row.type==1){
-                            return '<i class="fa fa-legal fa-fw"></i>入驻合同'
-                        }else if(row.type==2){
-                            return '<i class="fa fa-building-o fa-fw"></i>公寓合同'
-                        }else if(row.type==3){
-                            return '<i class="fa fa-bullseye fa-fw"></i>会议室合同'
-                        }else if(row.type==4){
-                            return '<i class="fa fa-steam fa-fw"></i>储藏室合同'
+                        if(row.curflow==0){
+                            return '<span class = "label label-info">交接中</span>'
+                        }else if(row.curflow==1){
+                            return '<span class = "label label-success">已交接</span>'
                         }
                    }
                 },
@@ -257,9 +221,9 @@
                 selector: 'td:first-child'
             },
             buttons: [
-                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加合同</i>'},
-                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改合同</i>'},
-                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除合同</i>'},
+                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加交接</i>'},
+                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改交接</i>'},
+                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除交接</i>'},
                 { extend: "excel", text: '<i class="fa fa-level-up">&nbsp;&nbsp;导出列表</i>',
                     exportOptions:{
                         columns:[1,2,3]
@@ -301,14 +265,14 @@
         //表单验证
         editor.on("preSubmit",function(e,o,action){
             if(action !== 'remove'){
-                var contractnum = this.field('contractnum');
-                if ( ! contractnum.isMultiValue() ) {
-                    if ( ! contractnum.val() ) {
-                        contractnum.error( '合同编号必填' );
+                var companyname = this.field('companyname');
+                if ( ! companyname.isMultiValue() ) {
+                    if ( ! companyname.val() ) {
+                        companyname.error( '合同编号必填' );
                     }
 
-                    if ( contractnum.val().length >= 20 ) {
-                        contractnum.error( '合同编号填写有误' );
+                    if ( companyname.val().length >= 20 ) {
+                        companyname.error( '合同编号填写有误' );
                     }
                 }
                 if ( this.inError() ) {
