@@ -16,4 +16,6 @@ public interface IFlowDAO {
 	public List<Flow> findAll();
 	public List<Flow> findByType(int type);
 	public Integer checkflow(String companyname);
+	public void updateRepair(Flow flow);//更新维修申请表，不包含验收单字段
+	public void updateReceiving(Flow flow);//更新维修申请表，只更新验收单部分字段
 }

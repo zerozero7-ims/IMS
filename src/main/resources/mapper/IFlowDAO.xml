@@ -11,8 +11,11 @@
 		<result property="companyname" column="companyname" />
 		<result property="curflow" column="curflow" />
 		<result property="attachment" column="attachment" typeHandler="com.ims.util.StringArrayTypeHandler" />
-		<result property="receiving" column="receiving" />
 		<result property="type" column="type" />
+		<result property="money" column="money" />
+		<result property="repairunit" column="repairunit" />
+		<result property="repairstart" column="repairstart" />
+		<result property="repairend" column="repairend" />
 	</resultMap>
 
 	<!-- 增删改查 -->
@@ -31,11 +34,11 @@
 
 	<!-- 插入数据后获得自增主键的值 -->
 	<insert id="insert" keyProperty="id" keyColumn="id">
-		INSERT INTO flow(companyname,curflow,attachment,receiving,type) VALUES(#{companyname},#{curflow},#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},#{receiving},#{type})
+		INSERT INTO flow(companyname,curflow,attachment,type) VALUES(#{companyname},#{curflow},#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},#{type})
 	</insert>
 	<!-- 修改用户内容 -->
 	<update id="update">
-		UPDATE flow set companyname=#{companyname},curflow=#{curflow},attachment=#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},receiving=#{receiving},type=#{type} WHERE id=#{id}
+		UPDATE flow set companyname=#{companyname},curflow=#{curflow},attachment=#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},type=#{type} WHERE id=#{id}
 	</update>
 	<!-- 根据id删除用户 -->
 	<delete id="delete">
@@ -59,6 +62,14 @@
 	<select id="checkflow" resultType="Integer">
 		SELECT id FROM flow WHERE companyname=#{companyname} AND type=1
 	</select>
+
+	<update id="updateRepair">
+		UPDATE flow set companyname=#{companyname},curflow=#{curflow},attachment=#{attachment,typeHandler=com.ims.util.StringArrayTypeHandler},type=#{type} WHERE id=#{id}
+	</update>
+
+	<update id="updateReceiving">
+		UPDATE flow set money=#{money},repairunit=#{repairunit},repairstart=#{repairstart},repairend=#{repairend},curflow=#{curflow} WHERE id=#{id}
+	</update>
 
 
 

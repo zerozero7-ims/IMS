@@ -425,6 +425,25 @@ public class ApiController {
 		return map;   //返回json格式的信息
 	}
 
+	@RequestMapping("/receivingaction")
+	@ResponseBody
+	public Object receivingaction(@RequestParam("action") String action, @RequestParam("flows") String flowlist, @RequestParam(value="upload",required =false) MultipartFile file){
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Flow> flows = new ArrayList<Flow>();
+		flows = JSONArray.parseArray(flowlist,Flow.class);
+		List<Flow> flist = new ArrayList<>();
+		for(Flow flow:flows) {
+			if("edit".equals(action)){
+				flow.setCurflow(2);
+				flowDAO.updateReceiving(flow);
+				flow = flowDAO.findById(flow.getId());
+				flist.add(flow);
+			}
+		}
+		map.put("data", flist);
+		return map;   //返回json格式的信息
+	}
+
 	@RequestMapping("/process_repairlist")
 	@ResponseBody
 	public Object process_repairlist(){
@@ -498,11 +517,6 @@ public class ApiController {
     public String unAuth(){
         return "unauthorized";
     }
-
-
-
-
-
 
 
 

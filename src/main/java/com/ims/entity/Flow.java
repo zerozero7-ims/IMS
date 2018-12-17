@@ -5,8 +5,11 @@ public class Flow {
     private String companyname;
     private int curflow;
     private String[] attachment;
-    private String receiving;
     private int type;
+    private float money;
+    private String repairunit;
+    private String repairstart;
+    private String repairend;
 
     public int getId() {
         return id;
@@ -39,20 +42,43 @@ public class Flow {
     public void setAttachment(String[] attachment) {
         this.attachment = attachment;
     }
-
-    public String getReceiving() {
-        return receiving;
-    }
-
-    public void setReceiving(String receiving) {
-        this.receiving = receiving;
-    }
-
     public int getType() {
         return type;
     }
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public float getMoney() {
+        return money;
+    }
+
+    public void setMoney(float money) {
+        this.money = money;
+    }
+
+    public String getRepairunit() {
+        return repairunit;
+    }
+
+    public void setRepairunit(String repairunit) {
+        this.repairunit = repairunit;
+    }
+
+    public String getRepairstart() {
+        return repairstart;
+    }
+
+    public void setRepairstart(String repairstart) {
+        this.repairstart = repairstart;
+    }
+
+    public String getRepairend() {
+        return repairend;
+    }
+
+    public void setRepairend(String repairend) {
+        this.repairend = repairend;
     }
 }

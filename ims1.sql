@@ -11,7 +11,7 @@
  Target Server Version : 50724
  File Encoding         : 65001
 
- Date: 12/12/2018 17:29:19
+ Date: 17/12/2018 14:45:10
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE `attachment`  (
   `web_path` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '附件存放的网络路径',
   `attachtype` int(2) DEFAULT NULL COMMENT '附件类型：1=补充资料；2=合同；3=表单',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 62 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of attachment
@@ -52,6 +52,14 @@ INSERT INTO `attachment` VALUES (50, '1544603450413.png', 105076, 'F:/ideaworksp
 INSERT INTO `attachment` VALUES (51, '1544603457986.txt', 33, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544603457986.txt', 'assets/upload/1544603457986.txt', 2);
 INSERT INTO `attachment` VALUES (52, '1544605446163.xls', 31744, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544605446163.xls', 'assets/upload/1544605446163.xls', 1);
 INSERT INTO `attachment` VALUES (53, '1544605630693.txt', 357, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544605630693.txt', 'assets/upload/1544605630693.txt', 2);
+INSERT INTO `attachment` VALUES (54, '1544693004550.pdf', 106093, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544693004550.pdf', 'assets/upload/1544693004550.pdf', 2);
+INSERT INTO `attachment` VALUES (55, '1544693589026.png', 43628, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544693589026.png', 'assets/upload/1544693589026.png', 3);
+INSERT INTO `attachment` VALUES (56, '1544694140438.png', 43628, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544694140438.png', 'assets/upload/1544694140438.png', 3);
+INSERT INTO `attachment` VALUES (57, '1544694274985.png', 77111, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544694274985.png', 'assets/upload/1544694274985.png', 3);
+INSERT INTO `attachment` VALUES (58, '1544748051653.png', 77111, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544748051653.png', 'assets/upload/1544748051653.png', 3);
+INSERT INTO `attachment` VALUES (59, '1544752890834.png', 49186, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544752890834.png', 'assets/upload/1544752890834.png', 3);
+INSERT INTO `attachment` VALUES (60, '1544754400021.png', 77111, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1544754400021.png', 'assets/upload/1544754400021.png', 3);
+INSERT INTO `attachment` VALUES (61, '1545027358492.png', 77111, 'F:/ideaworkspace/hfqxm/IMS/src/main/webapp/assets/upload/1545027358492.png', 'assets/upload/1545027358492.png', 3);
 
 -- ----------------------------
 -- Table structure for building
@@ -498,7 +506,7 @@ CREATE TABLE `contract`  (
   `attachment` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '合同附件',
   `type` int(2) DEFAULT NULL COMMENT '合同类别 1=入驻合同；2=公寓合同；3=会议室合同；4=储藏室合同',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of contract
@@ -507,6 +515,9 @@ INSERT INTO `contract` VALUES (1, 'KT-2018-ZF-001', '丹阳有道汽车电子科
 INSERT INTO `contract` VALUES (2, 'KT-2018-ZF-002', '东台立讯精密电子技术有限公司', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-12-11\",\"end\":\"2020-12-11\"}', '49,51', 1);
 INSERT INTO `contract` VALUES (3, 'KT-2018-ZF-003', '中铁嘉悦电子科技有限公司', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-11-12\",\"end\":\"2019-01-12\"}', '53', 3);
 INSERT INTO `contract` VALUES (4, 'KT-2018-ZF-004', '云智生态', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-12-06\",\"end\":\"2018-12-20\"}', NULL, 1);
+INSERT INTO `contract` VALUES (5, 'KT-2018-ZF-005', '南京三生生物技术有限公司', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-06-30\",\"end\":\"2019-06-30\"}', NULL, 1);
+INSERT INTO `contract` VALUES (6, 'KT-2018-ZF-006', '丹阳眼镜店', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-11-30\",\"end\":\"2019-11-30\"}', '54', 1);
+INSERT INTO `contract` VALUES (7, 'KT-2018-ZF-007', '新闵重型锻造有限公司', '南京科特科技创业服务有限公司', '南京科特科技创业服务有限公司', '{\"start\":\"2018-11-30\",\"end\":\"2020-11-30\"}', NULL, 1);
 
 -- ----------------------------
 -- Table structure for dict
@@ -533,6 +544,36 @@ INSERT INTO `dict` VALUES (12, 10, '长期');
 INSERT INTO `dict` VALUES (13, 10, '永久');
 
 -- ----------------------------
+-- Table structure for flow
+-- ----------------------------
+DROP TABLE IF EXISTS `flow`;
+CREATE TABLE `flow`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `companyname` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '企业名称',
+  `curflow` int(2) DEFAULT NULL COMMENT '当前状态',
+  `attachment` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '流程附件（房屋交接单、维修申请表、退房交接单）',
+  `type` int(2) DEFAULT NULL COMMENT '流程类别 1=房屋交接，2=退房交接流程，3=维修流程',
+  `money` decimal(16, 8) DEFAULT NULL COMMENT '维修验收单-维修金额',
+  `repairunit` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '维修验收单-维修单位',
+  `repairstart` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '维修验收单-维修开始时间',
+  `repairend` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '维修验收单-维修结束时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of flow
+-- ----------------------------
+INSERT INTO `flow` VALUES (2, '丹阳有道汽车电子科技有限公司', 1, '56', 1, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (4, '丹阳眼镜店', 1, '57', 1, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (5, '云智生态', 1, '58', 1, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (6, '新闵重型锻造有限公司', 0, NULL, 1, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (7, '丹阳有道汽车电子科技有限公司', 1, '59', 2, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (8, '丹阳眼镜店', 0, NULL, 2, NULL, NULL, NULL, NULL);
+INSERT INTO `flow` VALUES (9, '中铁嘉悦电子科技有限公司', 2, '60', 3, 246.12000000, '科特维修班', '2018-12-14', '2018-12-17');
+INSERT INTO `flow` VALUES (10, '兴化市实力链条有限公司', 1, '61', 3, 151.40000000, '园区部维修中心', '2018-12-16', '2018-12-17');
+INSERT INTO `flow` VALUES (11, '云智生态', 0, NULL, 3, NULL, NULL, NULL, NULL);
+
+-- ----------------------------
 -- Table structure for menu
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
@@ -553,9 +594,9 @@ CREATE TABLE `menu`  (
 INSERT INTO `menu` VALUES (1, 0, '控制台', 1, 'index', 1, 'fa-dashboard');
 INSERT INTO `menu` VALUES (2, 0, '用户管理', 2, 'users', 1, 'fa-user');
 INSERT INTO `menu` VALUES (3, 0, '基地企业管理', 3, 'companys', 1, 'fa-group');
-INSERT INTO `menu` VALUES (4, 0, '基地楼宇管理', 4, 'buildings', 1, 'fa-building-o');
-INSERT INTO `menu` VALUES (5, 0, '统计分析', 5, 'statistical', 1, 'fa-bar-chart-o');
-INSERT INTO `menu` VALUES (6, 0, '租赁合同', 6, 'contract', 1, 'fa-file-text-o');
+INSERT INTO `menu` VALUES (4, 0, '基地楼宇管理', 4, '#', 1, 'fa-building-o');
+INSERT INTO `menu` VALUES (5, 0, '统计分析', 5, '#', 1, 'fa-bar-chart-o');
+INSERT INTO `menu` VALUES (6, 0, '租赁合同', 6, '#', 1, 'fa-file-text-o');
 INSERT INTO `menu` VALUES (7, 0, '流程管理', 7, 'process', 1, 'fa-rotate-right');
 INSERT INTO `menu` VALUES (41, 4, '租赁详情', 1, 'lease_detail', 1, 'fa-list-alt');
 INSERT INTO `menu` VALUES (42, 4, '对外租赁资源', 2, 'lease', 1, 'fa-building-o');
@@ -564,10 +605,11 @@ INSERT INTO `menu` VALUES (44, 4, '有偿配套', 4, 'matching', 1, 'fa-steam');
 INSERT INTO `menu` VALUES (51, 5, '企业统计分析', 1, 'statistical_company', 1, 'fa-bar-chart-o');
 INSERT INTO `menu` VALUES (52, 5, '楼宇统计分析', 2, 'statistical_building', 1, 'fa-calendar');
 INSERT INTO `menu` VALUES (53, 5, '租金统计分析', 3, 'statistical_rent', 1, 'glyphicon-inbox');
-INSERT INTO `menu` VALUES (71, 7, '企业入驻流程', 1, 'process_enter', 1, 'icon-edit');
-INSERT INTO `menu` VALUES (72, 7, '企业交接流程', 2, 'process_handover', 1, 'icon-edit');
-INSERT INTO `menu` VALUES (73, 7, '企业退出流程', 3, 'process_out', 1, 'icon-edit');
-INSERT INTO `menu` VALUES (74, 7, '维修流程', 4, 'process_repair', 1, 'icon-edit');
+INSERT INTO `menu` VALUES (61, 6, '企业入驻合同', 1, 'contract', 1, 'fa-file-text-o');
+INSERT INTO `menu` VALUES (62, 6, '有偿配套合同', 2, 'contract_matching', 1, 'fa-file-text-o');
+INSERT INTO `menu` VALUES (71, 7, '房屋交接流程', 1, 'process_handover', 1, 'icon-edit');
+INSERT INTO `menu` VALUES (72, 7, '退房交接流程', 2, 'process_out', 1, 'icon-edit');
+INSERT INTO `menu` VALUES (73, 7, '维修流程', 3, 'process_repair', 1, 'icon-edit');
 INSERT INTO `menu` VALUES (2001, 2, '新建用户', 1, 'user_add', 0, 'fa-plus');
 INSERT INTO `menu` VALUES (2002, 2, '修改账号信息', 2, 'user_update', 0, 'fa-edit');
 INSERT INTO `menu` VALUES (2003, 3, '注销用户', 3, 'user_delete', 0, 'fa-trash-o');

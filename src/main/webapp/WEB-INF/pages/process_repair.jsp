@@ -131,7 +131,7 @@
                     submit:"修改"
                 },
                 remove:{
-                    title:"删除企业",
+                    title:"删除维修记录",
                     submit:"删除"
                 },
                 datetime: {
@@ -161,7 +161,7 @@
                 label: "企业名称:",
                 name: "companyname"
             }, {
-                label: "房屋交接单:",
+                label: "维修申请表:",
                 name: "attachment",
                 type:"uploadMany",
                 display: function ( fileId, counter ) {
@@ -169,9 +169,54 @@
                     return '<a href="'+editor.file( 'files', fileId ).web_path+'" target="_blank">'+editor.file( 'files', fileId ).filename+'</a>';
                 },
                 noFileText: 'No files'
+            }]
+        } );
+
+        var editor_receiving = new $.fn.dataTable.Editor( {
+            i18n:{
+                edit:{
+                    title:"修改记录",
+                    submit:"修改"
+                },
+                remove:{
+                    title:"删除记录",
+                    submit:"删除"
+                },
+                datetime: {
+                    months:   [ '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月' ],
+                    weekdays: [  '日','一', '二', '三', '四', '五', '六' ]
+                }
+            },
+            ajax: {
+                url:"receivingaction",
+                data:function(data){
+                    var result = {};
+                    result.action=data.action;
+                    var flows = [];
+                    for(var i in data.data){
+                        var flow = data.data[i];
+                        flow.id=i;
+                        flows.push(JSON.stringify(flow));
+                    }
+                    result.flows = "["+flows.toString()+"]";
+                    return result;
+                }
+
+            },
+            table: "#dataTables-example",
+            idSrc:'id',
+            fields: [ {
+                label: "维修金额:",
+                name: "money"
+            }, {
+                label: "施工单位:",
+                name: "repairunit"
             },{
-                label: "维修验收单:",
-                name: "receiving"
+                label: "施工开始时间:",
+                name: "repairstart"
+            },{
+                label: "施工结束时间:",
+                name: "repairend"
             }]
         } );
 
@@ -203,13 +248,27 @@
                       return result;
                   }
                 },
-                { data: "receiving" },
+                { data: "receiving",
+                  className:"center",
+                  orderable:false,
+                  // defaultContent:'<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">编辑验收单</button>',
+                  render: function ( data, type, row ) {
+                      // Combine the first and last names into a single table field
+                      // return '<a class = "label label-primary" data-toggle="modal" data-target="#myModal">编辑验收单</a>';
+                      return '<a class = "label label-primary editor_receiving">编辑验收单</a>';
+
+                  }
+
+
+                },
                 { data: "curflow",
                   render:function (data,type,row) {
                         if(row.curflow==0){
-                            return '<span class = "label label-info">维修中</span>'
+                            return '<span class = "label label-info">申请中</span>'
                         }else if(row.curflow==1){
-                            return '<span class = "label label-success">已验收</span>'
+                            return '<span class = "label label-success">维修中</span>'
+                        }else if(row.curflow==2){
+                            return '<span class = "label label-default">已验收</span>'
                         }
                    }
                 },
@@ -226,9 +285,9 @@
                 selector: 'td:first-child'
             },
             buttons: [
-                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加交接</i>'},
-                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改交接</i>'},
-                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除交接</i>'},
+                { extend: "create", editor: editor ,text: '<i class="fa fa-plus">&nbsp;&nbsp;添加维修</i>'},
+                { extend: "edit",   editor: editor ,text: '<i class="fa fa-edit">&nbsp;&nbsp;修改维修</i>'},
+                { extend: "remove", editor: editor ,text: '<i class="fa fa-trash-o">&nbsp;&nbsp;删除维修</i>'},
                 { extend: "excel", text: '<i class="fa fa-level-up">&nbsp;&nbsp;导出列表</i>',
                     exportOptions:{
                         columns:[1,2,3]
@@ -258,26 +317,27 @@
             } );
         } );
 
-        // Delete a record
-        $('#dataTables-example').on('click', 'a.editor_show', function (e) {
-            // e.preventDefault();
-            // editor.show( $(this).closest('tr'), {
-            //     // title: 'Delete',
-            //     // buttons: 'Delete'
-            // } );
-            editor.modal("show");
+        $('#dataTables-example').on('click', 'a.editor_receiving', function (e) {
+            e.preventDefault();
+            editor_receiving.edit( $(this).closest('tr'), {
+                title: '维修验收单',
+                buttons: '更新',
+            } );
         } );
+
+
+
         //表单验证
         editor.on("preSubmit",function(e,o,action){
             if(action !== 'remove'){
                 var companyname = this.field('companyname');
                 if ( ! companyname.isMultiValue() ) {
                     if ( ! companyname.val() ) {
-                        companyname.error( '合同编号必填' );
+                        companyname.error( '企业名称必填' );
                     }
 
                     if ( companyname.val().length >= 20 ) {
-                        companyname.error( '合同编号填写有误' );
+                        companyname.error( '企业名称填写有误' );
                     }
                 }
                 if ( this.inError() ) {
@@ -291,6 +351,34 @@
 
 </script>
 
+
+<!--模态框-验收表单-->
+<%--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">--%>
+    <%--<div class="modal-dialog">--%>
+        <%--<div class="modal-content">--%>
+            <%--<div class="modal-header">--%>
+                <%--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">--%>
+                    <%--&times;--%>
+                <%--</button>--%>
+                <%--<h4 class="modal-title" id="myModalLabel">维修验收单</h4>--%>
+            <%--</div>--%>
+            <%--<div class="modal-body">--%>
+                <%--<label>维修金额：</label><input type="text" name="money" id="money" />--%>
+                <%--<label>施工单位：</label><input type="text" name="department" id="department" />--%>
+                <%--<label>施工开始时间：</label><input type="text" name="start" id="start" />--%>
+                <%--<label>施工结束时间：</label><input type="text" name="end" id="end" />--%>
+            <%--</div>--%>
+            <%--<div class="modal-footer">--%>
+                <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭--%>
+                <%--</button>--%>
+                <%--<button type="button" class="btn btn-primary">--%>
+                    <%--提交--%>
+                <%--</button>--%>
+            <%--</div>--%>
+        <%--</div><!-- /.modal-content -->--%>
+    <%--</div><!-- /.modal -->--%>
+<%--</div>--%>
+<!--/模态框-验收表单-->
 </body>
 
 </html>
