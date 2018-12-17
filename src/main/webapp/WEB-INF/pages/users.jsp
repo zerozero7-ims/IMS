@@ -221,16 +221,6 @@
                     {label:"注销",value:"0"}
                 ]
             }, {
-                label: "登录时间:",
-                name: "logintime",
-
-            }, {
-                label: "注册时间:",
-                name: "regtime",
-                def:function(){return new Date();},
-                type:"datetime",
-                format:"YYYY-MM-DD HH:mm:ss"
-            }, {
                 label: "备注:",
                 name: "remark",
                 type:"textarea"

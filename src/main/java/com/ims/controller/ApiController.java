@@ -1,6 +1,7 @@
 package com.ims.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.Resource;
@@ -55,6 +56,8 @@ public class ApiController {
                 userDAO.update(user);
                 ulist.add(user);
             }else if("create".equals(action)){
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	            user.setRegtime(df.format(new Date()));
 	            userDAO.insert(user);
                 ulist.add(user);
             }else if("remove".equals(action)){
@@ -474,15 +477,15 @@ public class ApiController {
 		login.setPassword(password);
 		ResponseData responseData = ResponseData.ok();
 		Integer uid = userDAO.checkLogin(username,password);
-		System.out.println("-------------"+uid);
 		if(null != uid){
 			try {
 				User user = userDAO.findById(uid);
 				login.setUid(uid);
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String logintime = df.format(new Date());
+                user.setLogintime(logintime);
+				userDAO.updatelogintime(user);
 
-				System.out.println("id:"+login.getUid());
-				System.out.println("username:"+login.getUsername());
-				System.out.println("password:"+login.getPassword());
 				String token = new JWT().sign(login,60L* 1000L* 30L);
 				responseData.putDataValue("uid",login.getUid());
 				responseData.putDataValue("token",token);

@@ -16,5 +16,6 @@ public interface IUserDAO {
 	public List<User> findAll();
 
 	public Integer checkLogin(String username,String password);
+	public void updatelogintime(User user);
 
 }

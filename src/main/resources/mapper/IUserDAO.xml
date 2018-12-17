@@ -37,7 +37,7 @@
 	</insert>
 	<!-- 修改用户内容 -->
 	<update id="update">
-		UPDATE user set username=#{username}, password=#{password},logintime=#{logintime}, userstatus=#{userstatus}, remark=#{remark} WHERE id=#{id}
+		UPDATE user set username=#{username}, password=#{password} userstatus=#{userstatus}, remark=#{remark} WHERE id=#{id}
 	</update>
 	<!-- 根据id删除用户 -->
     <delete id="delete">
@@ -56,5 +56,9 @@
 	<select id="checkLogin" resultType="Integer">
 		SELECT id FROM user where username=#{0} and password=#{1}
     </select>
+
+	<update id="updatelogintime">
+		UPDATE user set logintime=#{logintime} WHERE id=#{id}
+	</update>
 
 </mapper>
